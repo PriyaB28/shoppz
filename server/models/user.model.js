@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    verify_email: {
+        type: Boolean,
+        default: false
+    },
     last_login_date: {
         type: Date,
         default: ""
@@ -30,6 +34,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["Active", "Inactive", "Suspended"],
         default: "Active"
+    },
+    forgot_password_otp: {
+        type: String,
+        default: null
+    },
+    forgot_password_expiry: {
+        type: Date,
+        default: ""
     },
     role: {
         type: String,
@@ -40,7 +52,7 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const UserModel = mongoose.model("User",userSchema)
+const UserModel = mongoose.model("User", userSchema)
 
 export default UserModel
 

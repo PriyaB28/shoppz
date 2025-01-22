@@ -1279,3 +1279,7 @@
         transform: translate3d(0, -54px, 0) !important
     }
 }
+
+.footer-list svg{
+    display: inline;
+}
