@@ -3,7 +3,8 @@ import { BASE_URL } from "../api/backendApiEndpoints"
 
 const Axios = axios.create({
     baseURL: BASE_URL,
-    withCredentials: true
+    withCredentials: true,
 })
+
 
 export default Axios

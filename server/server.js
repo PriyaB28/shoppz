@@ -13,6 +13,7 @@ app.use(cors({
     credentials : true,
     origin : process.env.FRONTEND_URL
 }))
+app.use(express.static("tmp"))
 
 const PORT = 8000 || process.env.PORT
 

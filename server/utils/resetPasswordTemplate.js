@@ -1,4 +1,4 @@
- const forgetPasswordOtp = (otp) => {
+ const forgetPasswordOtp = (url) => {
     return (
         `  <div style="margin: 24px auto ;">
             <table cellpadding="0" cellspacing="0" style="font-family: DM Sans, sans-serif; font-size: 16px; font-weight: 400; width: 600px; border: none; margin: 0 auto; border-radius: 6px; overflow: hidden; background-color: #fff; box-shadow: 0 0 3px rgba(60, 72, 88, 0.15);">
@@ -10,7 +10,7 @@
     
                 <tbody>
                     <tr>
-                        <td style="background-color: #f8fafc; padding: 16px; display: block; text-align: center;">
+                        <td style="background-color: #161c2d; padding: 16px; display: block; text-align: center;">
                             <h2 style="font-weight: 600;">Reset Password</h2>
                         </td>
                     </tr>
@@ -24,7 +24,7 @@
     
                     <tr>
                         <td style="padding: 16px 16px 0;">
-                            <h3 style="padding: 8px 20px; outline: none; text-decoration: none; font-size: 15px; display: inline-block; letter-spacing: 0.5px; transition: all 0.3s; font-weight: 500; border-radius: 6px; background-color: #f97316; border: 1px solid #f97316; color: #ffffff;">${otp}</h3>
+                            <a href=${url} style="padding: 8px 20px; outline: none; text-decoration: none; font-size: 15px; display: inline-block; letter-spacing: 0.5px; transition: all 0.3s; font-weight: 500; border-radius: 6px; background-color: #f97316; border: 1px solid #f97316; color: #ffffff;">Reset Password</a>
                         </td>
                     </tr>
     

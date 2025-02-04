@@ -9,8 +9,9 @@ if (!process.env.MONGODB_ATLAS_URL) {
 
 async function connectDB() {
     try {
-        await mongoose.connect(process.env.MONGODB_ATLAS_URL)
+        let conn = await mongoose.connect(process.env.MONGODB_ATLAS_URL)
         console.log('connected with database successfully');
+        return conn;
         
     } catch (error) {
         console.log("Mongodb connection error occured",error);

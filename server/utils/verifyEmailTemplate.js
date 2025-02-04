@@ -1,4 +1,4 @@
-const verifyEmailTemplate = (logoURL,verifyEmailFrontendLink)=>{
+const verifyEmailTemplate = (logoURL,otp)=>{
     return (
         ` <div style="margin: 24px auto ;">
             <table cellpadding="0" cellspacing="0" style="font-family: DM Sans, sans-serif; font-size: 16px; font-weight: 400; width: 600px; border: none; margin: 0 auto; border-radius: 6px; overflow: hidden; background-color: #fff; box-shadow: 0 0 3px rgba(60, 72, 88, 0.15);">
@@ -21,19 +21,19 @@ const verifyEmailTemplate = (logoURL,verifyEmailFrontendLink)=>{
                     <tr>
                         <td style="padding: 16px 16px 0; color: #161c2d;">
                             <p style="margin: 0; font-size: 18px; font-weight: 500;">Hello, Harry!</p>
-                            <p style="margin-bottom: 0; color: #94a3b8;">Thanks for creating an Shoppz account. To continue, please confirm your email address by clicking the button below :</p>
+                            <p style="margin-bottom: 0; color: #94a3b8;">Thanks for creating an Shoppz account. To continue, please confirm your email address by entering the following OTP :</p>
                         </td>
                     </tr>
     
                     <tr>
                         <td style="padding: 16px 16px 0;">
-                            <a href="${verifyEmailFrontendLink}" style="padding: 8px 20px; outline: none; text-decoration: none; font-size: 15px; display: inline-block; letter-spacing: 0.5px; transition: all 0.3s; font-weight: 500; border-radius: 6px; background-color: #f97316; border: 1px solid #f97316; color: #ffffff;">Confirm Email Address</a>
+                            <p  style="padding: 8px 20px; outline: none; text-decoration: none; font-size: 15px; display: inline-block; letter-spacing: 0.5px; transition: all 0.3s; font-weight: 500; border-radius: 6px; background-color: #f97316; border: 1px solid #f97316; color: #ffffff;">${otp}</a>
                         </td>
                     </tr>
     
                     <tr>
                         <td style="padding: 16px 16px 0; color: #94a3b8;">
-                            This link will be active for 30 min from the time this email was sent.
+                            This OTP will be active for 5 min from the time this email was sent.
                         </td>
                     </tr>
     

@@ -1224,7 +1224,7 @@
         position: absolute;
         top: 74px;
         inset-inline-start: 0px;
-        /* display: none; */
+        display: none;
         height: auto;
         width: 100%;
         overflow: auto;

@@ -1,15 +1,50 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from '../assets/images/home/logo-shoppz.png'
 import { LuShoppingCart } from "react-icons/lu";
 import { FiHeart } from "react-icons/fi";
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { IoIosLogIn } from "react-icons/io";
+import useAuth from '../hooks/useAuth';
+import { logoutApi } from '../api/backendApi';
+import { logout } from "../redux/authSlice"
+import { toast } from 'react-toastify';
 const Header = () => {
     const [openMobileMenu, setOpenMobileMenu] = useState(false)
-    console.log(openMobileMenu)
+    const [colorChange, setColorchange] = useState(false);
+    const [openUserDropDownMenu, setopenUserDropDownMenu] = useState(false)
+    const { user, dispatch } = useAuth()
+
+    const navigate = useNavigate()
+
+    const changeNavbarColor = () => {
+        if (window.scrollY >= 80) {
+            setColorchange(true);
+        } else {
+            setColorchange(false);
+        }
+    };
+    window.addEventListener("scroll", changeNavbarColor);
+
+    const handleLogout = async () => {
+        try {
+            const response = await logoutApi()
+            if (response.data.success) {
+                dispatch(logout(null))
+                toast.success(response.data.message)
+                navigate("/login")
+            }
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+    }
+
+    useEffect(() => {
+        user
+    },[])
+
     return (
         <>
-            <nav id="topnav" className="defaultscroll is-sticky bg-slate-950">
+            <nav id="topnav" className={`defaultscroll is-sticky bg-slate-950 ${colorChange ? "nav-sticky" : ""}`}>
                 <div className="container relative">
 
                     <Link className="logo" to="/">
@@ -123,49 +158,56 @@ const Header = () => {
                         </li>
 
                         <li className="dropdown inline-block relative ps-0.5">
-                            <Link to={'/register'}>
-                                <span className="size-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-full border border-orange-500 bg-orange-500 text-white">
-                                    {/* <img src="./src/assets/images/home/16.jpg" className="rounded-full" alt="" /> */}
-                                    <IoIosLogIn size={25} />
-                                </span>
-                            </Link>
-                            <button data-dropdown-toggle="dropdown" className="dropdown-toggle items-center" type="button">
-                                <span className="size-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-full border border-orange-500 bg-orange-500 text-white">
-                                    {/* <img src="./src/assets/images/home/16.jpg" className="rounded-full" alt="" /> */}
-                                    <IoIosLogIn size={25} />
-                                </span>
-                            </button>
-                            {/* <!-- Dropdown menu --> */}
-                            <div className="dropdown-menu absolute end-0 m-0 mt-4 z-10 w-48 rounded-md overflow-hidden bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 hidden" onClick={() => { }}>
-                                <ul className="py-2 text-start">
-                                    <li>
-                                        <p className="text-slate-400 pt-2 px-4">Welcome Jesus!</p>
-                                    </li>
-                                    <li>
-                                        <p className="flex items-center font-medium py-2 px-4"><i data-feather="dollar-sign" className="h-4 w-4 me-2"></i> Balance: <span className="text-orange-500 ms-2">$ 245.10</span></p>
-                                    </li>
-                                    <li>
-                                        <a href="user-account.html" className="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-orange-500 dark:hover:text-white"><i data-feather="user" className="h-4 w-4 me-2"></i>Account</a>
-                                    </li>
-                                    <li>
-                                        <a href="helpcenter.html" className="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-orange-500 dark:hover:text-white"><i data-feather="help-circle" className="h-4 w-4 me-2"></i>Helpcenter</a>
-                                    </li>
-                                    <li>
-                                        <a href="user-setting.html" className="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-orange-500 dark:hover:text-white"><i data-feather="settings" className="h-4 w-4 me-2"></i>Settings</a>
-                                    </li>
-                                    <li className="border-t border-gray-100 dark:border-gray-800 my-2"></li>
-                                    <li>
-                                        <a href="login.html" className="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-orange-500 dark:hover:text-white"><i data-feather="log-out" className="h-4 w-4 me-2"></i>Logout</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            {!user.IsAuthenticated &&
+                                <Link to={'/register'}>
+                                    <span className="size-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-full border border-orange-500 bg-orange-500 text-white">
+                                        {/* <img src="./src/assets/images/home/16.jpg" className="rounded-full" alt="" /> */}
+                                        <IoIosLogIn size={25} />
+                                    </span>
+                                </Link>
+                            }
+                            {user.IsAuthenticated && (
+                                <>
+                                    <button data-dropdown-toggle="dropdown" className="dropdown-toggle items-center" type="button" onClick={() => setopenUserDropDownMenu(preve => !preve)}>
+                                        <span className="size-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-full border border-orange-500 bg-orange-500 text-white">
+                                            <img src={user?.userInfo?.avatar} className="rounded-full" alt="" />
+                                            {/* <IoIosLogIn size={25} /> */}
+                                        </span>
+                                    </button>
+
+                                    <div className={`dropdown-menu absolute end-0 m-0 mt-4 z-10 w-48 rounded-md overflow-hidden bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 ${openUserDropDownMenu == true ? "" : "hidden"}`} onClick={() => { }}>
+                                        <ul className="py-2 text-start">
+                                            <li>
+                                                <p className="text-slate-400 pt-2 px-4">Welcome {user?.userInfo?.name}!</p>
+                                            </li>
+                                            <li>
+                                                <p className="flex items-center font-medium py-2 px-4"><i data-feather="dollar-sign" className="h-4 w-4 me-2"></i> Balance: <span className="text-orange-500 ms-2">$ 245.10</span></p>
+                                            </li>
+                                            <li>
+                                                <Link to={"/profile"} className="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-orange-500 dark:hover:text-white"><i data-feather="user" className="h-4 w-4 me-2"></i>Account</Link>
+                                            </li>
+                                            <li>
+                                                <a href="helpcenter.html" className="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-orange-500 dark:hover:text-white"><i data-feather="help-circle" className="h-4 w-4 me-2"></i>Helpcenter</a>
+                                            </li>
+                                            <li>
+                                                <a href="user-setting.html" className="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-orange-500 dark:hover:text-white"><i data-feather="settings" className="h-4 w-4 me-2"></i>Settings</a>
+                                            </li>
+                                            <li className="border-t border-gray-100 dark:border-gray-800 my-2"></li>
+                                            <li>
+                                                <button onClick={handleLogout} type='button' className="flex items-center font-medium py-2 px-4 dark:text-white/70 hover:text-orange-500 dark:hover:text-white"><i data-feather="log-out" className="h-4 w-4 me-2"></i>Logout</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </>
+                            )
+                            }
                         </li>
                         {/* <!--end dropdown--> */}
                     </ul>
                     {/* <!--Login button End--> */}
                     {/* {
                         openMobileMenu && ( */}
-                    <div id="navigation">
+                    <div id="navigation" className={`${openMobileMenu ? "!block" : ""}`}>
                         {/* <!-- Navigation Menu--> */}
                         <ul className="navigation-menu">
                             <li className="has-submenu parent-menu-item active">
@@ -374,14 +416,15 @@ const Header = () => {
                                 </ul>
                             </li>
 
-                            <li><a href="sale.html" className="sub-menu-item">Sale</a></li>
+                            {/* <li><a href="sale.html" className="sub-menu-item">Sale</a></li> */}
 
                             <li><a href="contact.html" className="sub-menu-item">Contact</a></li>
+                            <li><Link to={"/about"} className="sub-menu-item">About</Link></li>
                         </ul>
                         {/* <!--end navigation menu--> */}
                     </div>
                     {/* )
-                    } */}
+                    }  */}
 
                     {/* <!--end navigation--> */}
                 </div>

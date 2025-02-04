@@ -1,29 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { useFormik } from "formik";
-import { Link, useNavigate } from "react-router"
+import { useFormik } from 'formik'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 import { toast } from 'react-toastify';
 
-import { registerSchema } from "../schema/registerSchema";
+import { resetPasswordSchema } from '../schema/registerSchema'
 import Loader from '../components/Loader'
 
 import logo from '../assets/images/home/logo-shoppz.png'
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import { useMutation } from "@tanstack/react-query";
-import { registerApi } from "../api/backendApi";
-import useAuth from "../hooks/useAuth";
-import { setCredentials } from "../redux/authSlice";
+import { FaHeart } from "react-icons/fa";
+import { useMutation } from '@tanstack/react-query';
+import { resetPasswordApi } from '../api/backendApi';
+import useAuth from '../hooks/useAuth';
+import { setCredentials } from '../redux/authSlice';
 
-const Register = () => {
-    const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+const ResetPassword = () => {
+
     const { user, dispatch } = useAuth()
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (user?.IsAuthenticated) {
-            navigate("/")
+        if (!user?.email) {
+            toast.error("User not found")
+            navigate("/login")
         }
     }, [])
+
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
 
     const handleShowPassword = () => {
         setShowPassword(prev => !prev)
@@ -32,33 +37,24 @@ const Register = () => {
         setShowConfirmPassword(prev => !prev)
     };
 
-    const mutation = useMutation({
-        mutationKey: "register",
-        mutationFn: (data) => registerApi(data),
-        onSuccess: (response) => {
-
-            if (response.status == 200) {
-                toast.success("Verification email sent to your entered email. Please verify your account ")
-                let userData = response.data.data
-                // dispatch(setCredentials(userData))
-                // console.log(userData);
-                
-                let state = userData
-                navigate("/verify-email", {
-                    state: state,
-                    replace:true
-                })
+    let mutation = useMutation({
+        mutationKey: "resetPassword",
+        mutationFn: (data) => resetPasswordApi(data),
+        onSuccess: (data) => {
+            if (data.status == 200) {
+                resetForm()
+                toast.success("Password changed successfully.")
+                dispatch(setCredentials(null))
+                navigate("/login")
             }
         },
         onError: (error) => {
+            console.log(error);
             toast.error(error.response.data.message)
         }
     })
 
     let initialValues = {
-        id: "",
-        name: "",
-        email: "",
         password: "",
         confirmPassword: ""
     };
@@ -74,19 +70,25 @@ const Register = () => {
         resetForm
     } = useFormik({
         initialValues: initialValues,
-        validationSchema: registerSchema,
+        validationSchema: resetPasswordSchema,
         enableReinitialize: true,
         onSubmit: async (values) => {
             // console.log('values', values)
+            values = {
+                ...values, ...user
+            }
             mutation.mutate(values)
         },
     });
 
+
     const errorsLength = Object.values(errors).length
+    const year = new Date().getFullYear()
+
 
     return (
         <>
-            <section className="md:h-screen py-36 flex items-center bg-orange-500/10 dark:bg-orange-500/20 bg-[url('./src/assets/images/bg-shape.png')] bg-center bg-no-repeat bg-cover text-white">
+            <section className="md:h-screen py-36 flex items-center bg-orange-500/10 dark:bg-orange-500/20 bg-[url('../src/assets/images/bg-shape.png')] bg-center bg-no-repeat bg-cover text-white">
                 <div className="container relative">
                     <div className="grid grid-cols-1">
                         <div className="relative overflow-hidden rounded-md shadow dark:shadow-gray-700 bg-white dark:bg-slate-900">
@@ -94,7 +96,7 @@ const Register = () => {
                                 <div className="relative md:shrink-0">
                                     <img
                                         className="h-full w-full object-cover md:h-[44rem]"
-                                        src="./src/assets/images/signup.jpg"
+                                        src="../src/assets/images/forgot-password.jpg"
                                         alt=""
                                     />
                                 </div>
@@ -102,11 +104,6 @@ const Register = () => {
                                 <div className="px-8 py-5 lg:px-20">
                                     <div className="text-center mt">
                                         <a href="index.html">
-                                            {/* <img
-                                            src="assets/images/logo-dark.png"
-                                            className="mx-auto block dark:hidden"
-                                            alt=""
-                                        /> */}
                                             <img
                                                 src={logo}
                                                 className="mx-auto hidden dark:block"
@@ -120,46 +117,9 @@ const Register = () => {
                                         className="text-start lg:py-16 py-8"
                                         onSubmit={handleSubmit}
                                     >
+                                        <p className="text-slate-400 mb-6 text-center">Please enter your new password</p>
                                         <div className="grid grid-cols-1">
-                                            <div className="mb-4">
-                                                <label className="font-semibold" htmlFor="RegisterName">
-                                                    Your Name:
-                                                </label>
-                                                <input
-                                                    id="RegisterName"
-                                                    type="text"
-                                                    className="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border-2 border-gray-800 focus:border-orange-500"
-                                                    placeholder="Enter Name"
-                                                    value={values?.name}
-                                                    name="name"
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur}
-                                                />
-                                                {touched.name && errors.name ?
-                                                    <span className="text-red-500 text-sm">{errors.name}</span>
-                                                    : null
-                                                }
-                                            </div>
 
-                                            <div className="mb-4">
-                                                <label className="font-semibold" htmlFor="LoginEmail">
-                                                    Email Address:
-                                                </label>
-                                                <input
-                                                    id="LoginEmail"
-                                                    type="email"
-                                                    className="mt-3 w-full py-2 px-3 h-10 bg-transparent dark:bg-slate-900 dark:text-slate-200 rounded outline-none border-2 border-gray-800 focus:border-orange-500"
-                                                    placeholder="name@example.com"
-                                                    value={values.email}
-                                                    name="email"
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur}
-                                                />
-                                                {touched.email && errors.email ?
-                                                    <span className="text-red-500 text-sm">{errors.email}</span>
-                                                    : null
-                                                }
-                                            </div>
 
                                             <div className="mb-4">
                                                 <label className="font-semibold" htmlFor="LoginPassword">
@@ -225,25 +185,6 @@ const Register = () => {
                                                     : null
                                                 }
                                             </div>
-                                            {/* <div className="mb-4">
-                                            <div className="flex items-center w-full mb-0">
-                                                <input
-                                                    className="form-checkbox rounded border-gray-100 dark:border-gray-800 text-orange-500 focus:border-orange-300 focus:ring focus:ring-offset-0 focus:ring-orange-200 focus:ring-opacity-50 me-2"
-                                                    type="checkbox"
-                                                    value=""
-                                                    id="AcceptT&C"
-                                                />
-                                                <label
-                                                    className="form-check-label text-slate-400"
-                                                    htmlFor="AcceptT&C"
-                                                >
-                                                    I Accept{" "}
-                                                    <a href="#" className="text-orange-500">
-                                                        Terms And Condition
-                                                    </a>
-                                                </label>
-                                            </div>
-                                        </div> */}
 
                                             <div className="mb-4">
                                                 <button
@@ -253,25 +194,25 @@ const Register = () => {
                                                 > Register</button>
                                             </div>
 
-                                            <div className="text-center">
-                                                <span className="text-slate-400 me-2">
-                                                    Already have an account ?{" "}
-                                                </span>{" "}
-                                                <Link
-                                                    to={"/login"}
-                                                    className="text-black dark:text-white font-bold inline-block"
-                                                >
-                                                    Sign in
-                                                </Link>
-                                            </div>
+                                            {/* <div className="text-center">
+                                            <span className="text-slate-400 me-2">
+                                                Already have an account ?{" "}
+                                            </span>{" "}
+                                            <Link
+                                                to={"/login"}
+                                                className="text-black dark:text-white font-bold inline-block"
+                                            >
+                                                Sign in
+                                            </Link>
+                                        </div> */}
                                         </div>
                                     </form>
 
                                     <div className="text-center">
                                         <p className="mb-0 text-slate-400">
-                                            © <script>document.write(new Date().getFullYear())</script>{" "}
-                                            Cartzio. Design with{" "}
-                                            <i className="mdi mdi-heart text-red-600"></i> by{" "}
+                                            © {year}{" "}
+                                            Cartzio. Design with
+                                            <FaHeart className='inline ms-1' /> by{" "}
                                             <a
                                                 href="https://shreethemes.in/"
                                                 target="_blank"
@@ -290,7 +231,7 @@ const Register = () => {
             </section>
             {mutation?.isPending && <Loader />}
         </>
-    );
-};
+    )
+}
 
-export default Register;
+export default ResetPassword
