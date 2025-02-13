@@ -7,6 +7,11 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // import Header from './components/Header'
 // import Footer from './components/Footer'
+import AdminLayout from "./pages/portal/layout/Layout";
+import Product from "./pages/portal/products";
+import Category from "./pages/portal/categories";
+import CategoryForm from "./pages/portal/categories/Form";
+
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
@@ -23,6 +28,7 @@ import ForgotPasswordOtpVerification from "./pages/ForgotPasswordOtpVerification
 import { userDetailsApi } from "./api/backendApi";
 import useAuth from "./hooks/useAuth";
 import { setCredentials } from "./redux/authSlice";
+import ProductListing from "./pages/ProductListing";
 
 function App() {
   const { user, dispatch } = useAuth();
@@ -62,9 +68,16 @@ function App() {
          */}
 
         <Routes>
+          <Route path="/admin"  element={<AdminLayout />}>
+            <Route index element={<Product />} />
+            <Route path="category" element={<Category />} />
+            <Route path="add-category" element={<CategoryForm />} />
+            <Route path="edit-category/:id" element={<CategoryForm />} />
+          </Route>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/product-listing" element={<ProductListing />} />
           </Route>
 
           <Route element={<ProtectedRoute />}>
