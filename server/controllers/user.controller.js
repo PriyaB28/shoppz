@@ -154,9 +154,9 @@ const loginUser = async (req, res) => {
     }
 }
 
-const googleLogin = async (req, res) => {
+const googleLogin = async (req, res) => { //create a common function for social logins by passing id and type of social login from frontend
     try {
-        // console.log(req.body);
+        console.log(req.body);
         let code = req.body.code
         const { tokens } = await oauth2Client.getToken(code)
         const userRes = await axios.get(
@@ -372,22 +372,25 @@ const resetPassword = async (req, res) => {
 const updateUserDetails = async (req, res) => {
     try {
         const userId = req.userId //auth middleware
-        const { name, email, phone } = req.body
+        const { name, email, phone,password } = req.body
 
-        // let hashPassword = ""
+        let hashPassword = ""
 
-        // if(password){
-        //     const salt = await bcryptjs.genSalt(10)
-        //     hashPassword = await bcryptjs.hash(password,salt)
-        // }
+        if (password) {
+            const checkOldPassword = userModel.comparePassword(password)
+            if (checkOldPassword) {
+                throw new Error("New password must be different from old password");
+            }
+        }
 
         const updateUser = await UserModel.findOneAndUpdate({ _id: userId }, {
             ...(name && { name: name }),
             ...(email && { email: email }),
-            ...(phone && { phone: phone })
+            ...(phone && { phone: phone }),
+            ...(password && { password: hashPassword })
         })
 
-        const { password, ...rest } = updateUser._doc
+        const { password:pw, ...rest } = updateUser._doc
         return res.json({
             message: "Updated successfully",
             success: true,
@@ -409,7 +412,7 @@ const uploadAvatar = async (req, res) => {
         const existingAvatarPath = await UserModel.findById(userId)
         let oldAvatar = path.parse(existingAvatarPath.avatar).base
         let unlinkPath = path.dirname(__dirname) + "/tmp/uploads/" + oldAvatar
-
+P
         fs.unlink(unlinkPath, (err) => {
             console.log(err);
         })

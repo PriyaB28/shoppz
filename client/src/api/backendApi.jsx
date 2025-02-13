@@ -45,7 +45,7 @@ const loginApi = async (data) => {
 
 const googleLoginApi = async (data) => {
     console.log("g api");
-    
+
     const response = await axios({
         ...backendApiEndpoints.googleLogin,
         data
@@ -116,4 +116,50 @@ const userDetailsApi = async () => {
     return response
 }
 
-export { registerApi, forgotPasswordOtpApi, verifyEmailOtpApi, loginApi,googleLoginApi, resetPasswordApi, verifyForgotPasswordEmailApi, updateUserProfileApi, uploadAvatar, logoutApi, userDetailsApi }
+const getCategoriesApi = async (page=1) => {
+    let url = backendApiEndpoints.categories.url+`?page=${page}&limit=4`
+    const response = await axios({
+        ...backendApiEndpoints.categories,url
+    })
+    return response
+}
+
+const addCategoryApi = async (data) => {
+    const response = await axios({
+        ...backendApiEndpoints.addCategory,
+        data: data, headers: {
+            "Content-Type": "multipart/form-data",
+        }
+    })
+    return response
+}
+
+const updateCategoryApi = async (data) => {
+    const response = await axios({
+        ...backendApiEndpoints.updateCategory,
+        data: data, headers: {
+            "Content-Type": "multipart/form-data",
+        }
+    })
+    return response
+}
+
+const getCategoryByIdApi = async (id) => {
+    const url = backendApiEndpoints.categoryById.url+"/"+id
+
+    const response = await axios({
+        ...backendApiEndpoints.categoryById,url
+    })
+    return response
+}
+
+const deleteCategoryByIdApi = async (id) => {
+    const url = backendApiEndpoints.deleteCategory.url+"/"+id
+
+    const response = await axios({
+        ...backendApiEndpoints.deleteCategory,url
+    })
+    return response
+}
+
+export { registerApi, forgotPasswordOtpApi, verifyEmailOtpApi, loginApi, googleLoginApi, resetPasswordApi, verifyForgotPasswordEmailApi, updateUserProfileApi, uploadAvatar, logoutApi, userDetailsApi, getCategoriesApi, addCategoryApi,updateCategoryApi,getCategoryByIdApi,deleteCategoryByIdApi }

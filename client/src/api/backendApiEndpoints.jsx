@@ -15,7 +15,7 @@ const backendApiEndpoints = {
     },
     googleLogin: {
         url: "api/user/google-login",
-        method:"post"
+        method: "post"
     },
     forgotPasswordOtp: {
         url: "api/user/verify-forgot-password",
@@ -44,6 +44,25 @@ const backendApiEndpoints = {
     userDetails: {
         url: "api/user/user-details"
     },
+    categories: {
+        url: "api/category"
+    },
+    addCategory: {
+        url: "api/category",
+        method: "post"
+    },
+    updateCategory: {
+        url: "api/category",
+        method:"put"
+    },
+    categoryById: {
+        url: "api/category",
+        method:"get"
+    },
+    deleteCategory: {
+        url: "/api/category",
+        method:"delete"
+    }
 }
 
 export default backendApiEndpoints

@@ -25,5 +25,10 @@ export const forgotPasswordSchema = Yup.object(forgotValidation)
 let { name:nm,email, ...resetValidation } = validations
 export const resetPasswordSchema = Yup.object(resetValidation)
 
-let {confirmPassword:cpwd,password:p,...profileValidations} = validations
+let { confirmPassword: cpwd, password: p, ...profileValidations } = validations
+profileValidations.password = Yup.string().min(8, "Must be 8 characters or more")
+.matches(/[a-z]+/, "One lowercase character")
+.matches(/[A-Z]+/, "One uppercase character")
+.matches(/[@$!%*#?&]+/, "One special character")
+    .matches(/\d+/, "One number")
 export const profileSchema = Yup.object(profileValidations)
