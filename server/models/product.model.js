@@ -27,28 +27,20 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    catName: {
-        type: String,
-        default: ''
-    },
-    catId: {
-        type: mongoose.Schema.ObjectId,
-        ref:"Category",
-        default: ''
-    },
-    subCatId: {
-        type: String,
-        default: ''
-    },
-    subCatName: {
-        type: String,
-        default: ''
-    },
+    catId: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "Category",
+            default: ''
+        }
+    ],
+    subCatId: [
+        {
+            type: String,
+            default: ''
+        }
+    ],
     thirdSubCatId: {
-        type: String,
-        default: ''
-    },
-    thirdSubCatName: {
         type: String,
         default: ''
     },

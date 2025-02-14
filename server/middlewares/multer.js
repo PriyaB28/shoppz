@@ -4,12 +4,14 @@ import fs from "fs"
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    let dir = './tmp/uploads'
-    if (file.fieldname == "categoryImages") {
-      dir += "/category"
-    } else if (file.fieldname == "productImages") {
-      dir += "/products"
-    }
+    let dir = './tmp/uploads/'
+    // if (file.fieldname == "categoryImages") {
+    //   dir += "/category"
+    // } else if (file.fieldname == "productImages") {
+    //   dir += "/products"
+    // }
+    var folder = file.fieldname.replace('Images', '');
+    dir += folder
     // fs.mkdir(dir, error => cb(error))
     fs.access(dir, fs.constants.F_OK, exist => {
       if (exist) {

@@ -22,7 +22,7 @@ const index = () => {
         id:""
     })
     
-    const { data, isPending } = useQuery({
+    const { data, isPending , refetch} = useQuery({
         queryKey: ['posts', page],
         queryFn: () => getCategoriesApi(page)
     })
@@ -38,10 +38,12 @@ const index = () => {
             const response = await deleteCategoryByIdApi(deleteCategoryId)
             if (response.status == 200) { 
                 setIsOpenConfirmAlert(false)
+                refetch()
                 toast.success("Category added")
             }
         } catch (error) {
             toast.error(error.response.data.message)
+            setIsOpenConfirmAlert(false)
         }
 }
     return (

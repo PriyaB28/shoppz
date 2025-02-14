@@ -1,0 +1,262 @@
+{
+  "hash": "7a86258c",
+  "configHash": "37658444",
+  "lockfileHash": "587f994e",
+  "browserHash": "a2711f35",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "176a3104",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "8107a7ee",
+      "needsInterop": true
+    },
+    "react-router": {
+      "src": "../../node_modules/react-router/dist/development/index.mjs",
+      "file": "react-router.js",
+      "fileHash": "254b4cc1",
+      "needsInterop": false
+    },
+    "react-redux": {
+      "src": "../../node_modules/react-redux/dist/react-redux.mjs",
+      "file": "react-redux.js",
+      "fileHash": "6e1a8df1",
+      "needsInterop": false
+    },
+    "redux-persist/integration/react": {
+      "src": "../../node_modules/redux-persist/es/integration/react.js",
+      "file": "redux-persist_integration_react.js",
+      "fileHash": "4857b443",
+      "needsInterop": false
+    },
+    "@react-oauth/google": {
+      "src": "../../node_modules/@react-oauth/google/dist/index.esm.js",
+      "file": "@react-oauth_google.js",
+      "fileHash": "917d6c37",
+      "needsInterop": false
+    },
+    "react-toastify": {
+      "src": "../../node_modules/react-toastify/dist/index.mjs",
+      "file": "react-toastify.js",
+      "fileHash": "990c7f66",
+      "needsInterop": false
+    },
+    "@tanstack/react-query": {
+      "src": "../../node_modules/@tanstack/react-query/build/modern/index.js",
+      "file": "@tanstack_react-query.js",
+      "fileHash": "c562f47f",
+      "needsInterop": false
+    },
+    "@tanstack/react-query-devtools": {
+      "src": "../../node_modules/@tanstack/react-query-devtools/build/modern/index.js",
+      "file": "@tanstack_react-query-devtools.js",
+      "fileHash": "84507d15",
+      "needsInterop": false
+    },
+    "@reduxjs/toolkit": {
+      "src": "../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs",
+      "file": "@reduxjs_toolkit.js",
+      "fileHash": "62e6a89c",
+      "needsInterop": false
+    },
+    "redux-persist": {
+      "src": "../../node_modules/redux-persist/es/index.js",
+      "file": "redux-persist.js",
+      "fileHash": "d194de66",
+      "needsInterop": false
+    },
+    "redux-persist/lib/storage": {
+      "src": "../../node_modules/redux-persist/lib/storage/index.js",
+      "file": "redux-persist_lib_storage.js",
+      "fileHash": "c67fe1dd",
+      "needsInterop": true
+    },
+    "react-quilljs": {
+      "src": "../../node_modules/react-quilljs/esm/index.js",
+      "file": "react-quilljs.js",
+      "fileHash": "469caffb",
+      "needsInterop": false
+    },
+    "react-dom": {
+      "src": "../../node_modules/react-dom/index.js",
+      "file": "react-dom.js",
+      "fileHash": "05c5cc23",
+      "needsInterop": true
+    },
+    "react-filepond": {
+      "src": "../../node_modules/react-filepond/dist/react-filepond.esm.js",
+      "file": "react-filepond.js",
+      "fileHash": "e0f1625e",
+      "needsInterop": false
+    },
+    "filepond-plugin-image-exif-orientation": {
+      "src": "../../node_modules/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.esm.js",
+      "file": "filepond-plugin-image-exif-orientation.js",
+      "fileHash": "eb3f2589",
+      "needsInterop": false
+    },
+    "filepond-plugin-image-preview": {
+      "src": "../../node_modules/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js",
+      "file": "filepond-plugin-image-preview.js",
+      "fileHash": "a7b72bd6",
+      "needsInterop": false
+    },
+    "js-cookie": {
+      "src": "../../node_modules/js-cookie/dist/js.cookie.mjs",
+      "file": "js-cookie.js",
+      "fileHash": "8b72dfd6",
+      "needsInterop": false
+    },
+    "react-icons/fa": {
+      "src": "../../node_modules/react-icons/fa/index.mjs",
+      "file": "react-icons_fa.js",
+      "fileHash": "d8106380",
+      "needsInterop": false
+    },
+    "formik": {
+      "src": "../../node_modules/formik/dist/formik.esm.js",
+      "file": "formik.js",
+      "fileHash": "e22d7d99",
+      "needsInterop": false
+    },
+    "react-phone-input-2": {
+      "src": "../../node_modules/react-phone-input-2/lib/lib.js",
+      "file": "react-phone-input-2.js",
+      "fileHash": "cf3bdaa5",
+      "needsInterop": true
+    },
+    "react-icons/fi": {
+      "src": "../../node_modules/react-icons/fi/index.mjs",
+      "file": "react-icons_fi.js",
+      "fileHash": "ff0d21a1",
+      "needsInterop": false
+    },
+    "react-icons/fa6": {
+      "src": "../../node_modules/react-icons/fa6/index.mjs",
+      "file": "react-icons_fa6.js",
+      "fileHash": "56528960",
+      "needsInterop": false
+    },
+    "react-icons/bi": {
+      "src": "../../node_modules/react-icons/bi/index.mjs",
+      "file": "react-icons_bi.js",
+      "fileHash": "74345330",
+      "needsInterop": false
+    },
+    "react-otp-input": {
+      "src": "../../node_modules/react-otp-input/lib/index.esm.js",
+      "file": "react-otp-input.js",
+      "fileHash": "bc55f136",
+      "needsInterop": false
+    },
+    "react-icons/ri": {
+      "src": "../../node_modules/react-icons/ri/index.mjs",
+      "file": "react-icons_ri.js",
+      "fileHash": "456aa65d",
+      "needsInterop": false
+    },
+    "moment": {
+      "src": "../../node_modules/moment/dist/moment.js",
+      "file": "moment.js",
+      "fileHash": "f11e862f",
+      "needsInterop": false
+    },
+    "react-icons/io5": {
+      "src": "../../node_modules/react-icons/io5/index.mjs",
+      "file": "react-icons_io5.js",
+      "fileHash": "47f80372",
+      "needsInterop": false
+    },
+    "yup": {
+      "src": "../../node_modules/yup/index.esm.js",
+      "file": "yup.js",
+      "fileHash": "843c10b0",
+      "needsInterop": false
+    },
+    "react-icons/md": {
+      "src": "../../node_modules/react-icons/md/index.mjs",
+      "file": "react-icons_md.js",
+      "fileHash": "c418508d",
+      "needsInterop": false
+    },
+    "react-icons/go": {
+      "src": "../../node_modules/react-icons/go/index.mjs",
+      "file": "react-icons_go.js",
+      "fileHash": "e6f949b1",
+      "needsInterop": false
+    },
+    "react-icons/lu": {
+      "src": "../../node_modules/react-icons/lu/index.mjs",
+      "file": "react-icons_lu.js",
+      "fileHash": "fe47f125",
+      "needsInterop": false
+    },
+    "react-icons/io": {
+      "src": "../../node_modules/react-icons/io/index.mjs",
+      "file": "react-icons_io.js",
+      "fileHash": "b6870b20",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "68c833c4",
+      "needsInterop": false
+    },
+    "react-simple-star-rating": {
+      "src": "../../node_modules/react-simple-star-rating/dist/index.js",
+      "file": "react-simple-star-rating.js",
+      "fileHash": "833b95a4",
+      "needsInterop": true
+    },
+    "react-range-slider-input": {
+      "src": "../../node_modules/react-range-slider-input/dist/index.js",
+      "file": "react-range-slider-input.js",
+      "fileHash": "79287589",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "E3YREIG7-QMQUTWMT": {
+      "file": "E3YREIG7-QMQUTWMT.js"
+    },
+    "LFXA4CB4-HKTP6INL": {
+      "file": "LFXA4CB4-HKTP6INL.js"
+    },
+    "chunk-YTWHHBNR": {
+      "file": "chunk-YTWHHBNR.js"
+    },
+    "chunk-GHUM2KLA": {
+      "file": "chunk-GHUM2KLA.js"
+    },
+    "chunk-TIYQVLHI": {
+      "file": "chunk-TIYQVLHI.js"
+    },
+    "chunk-I4PYZP5Q": {
+      "file": "chunk-I4PYZP5Q.js"
+    },
+    "chunk-MBT3EELI": {
+      "file": "chunk-MBT3EELI.js"
+    },
+    "chunk-SBRINBQR": {
+      "file": "chunk-SBRINBQR.js"
+    },
+    "chunk-JKTQC6Y7": {
+      "file": "chunk-JKTQC6Y7.js"
+    },
+    "chunk-3I6JAFN6": {
+      "file": "chunk-3I6JAFN6.js"
+    },
+    "chunk-UVNPGZG7": {
+      "file": "chunk-UVNPGZG7.js"
+    },
+    "chunk-OL46QLBJ": {
+      "file": "chunk-OL46QLBJ.js"
+    }
+  }
+}

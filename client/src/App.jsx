@@ -11,6 +11,8 @@ import AdminLayout from "./pages/portal/layout/Layout";
 import Product from "./pages/portal/products";
 import Category from "./pages/portal/categories";
 import CategoryForm from "./pages/portal/categories/Form";
+import SubCategory from "./pages/portal/subCategories";
+import SubCategoryForm from "./pages/portal/subCategories/Form";
 
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
@@ -70,9 +72,15 @@ function App() {
         <Routes>
           <Route path="/admin"  element={<AdminLayout />}>
             <Route index element={<Product />} />
+
             <Route path="category" element={<Category />} />
             <Route path="add-category" element={<CategoryForm />} />
             <Route path="edit-category/:id" element={<CategoryForm />} />
+
+            <Route path="sub-category" element={<SubCategory />} />
+            <Route path="add-sub-category" element={<SubCategoryForm />} />
+            <Route path="edit-sub-category/:id" element={<SubCategoryForm />} />
+            
           </Route>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />

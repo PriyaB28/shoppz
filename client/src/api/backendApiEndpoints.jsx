@@ -62,6 +62,25 @@ const backendApiEndpoints = {
     deleteCategory: {
         url: "/api/category",
         method:"delete"
+    },
+    subCategories: {
+        url: "api/sub-category"
+    },
+    addSubCategory: {
+        url: "api/sub-category",
+        method: "post"
+    },
+    updateSubCategory: {
+        url: "api/sub-category",
+        method:"put"
+    },
+    subCategoryById: {
+        url: "api/sub-category",
+        method:"get"
+    },
+    deleteSubCategory: {
+        url: "/api/sub-category",
+        method:"delete"
     }
 }
 
