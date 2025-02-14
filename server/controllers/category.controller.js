@@ -4,6 +4,8 @@ import path from "path"
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import fs from "fs"
+import SubCategoryModel from "../models/subCategory.model.js";
+import ProductModel from "../models/product.model.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -75,14 +77,14 @@ const getCategories = async (req, res) => {
 
         const page = req.query.page || 1;
         const limit = req.query.limit || 5;
-      
+
         // Calculate the offset
         const offset = (page - 1) * limit;
 
         const categories = await CategoryModel.find().skip(offset)
-        .limit(limit)
+            .limit(limit)
             .exec();
-        
+
         if (!categories) {
             throw new Error("Not found");
         }
@@ -126,7 +128,7 @@ const updateCategory = async (req, res) => {
     try {
         const data = req.body
         const images = req.files
-       
+
         if (!data.id || !data.name) {
             throw new Error("Please provide data");
         }
@@ -218,6 +220,22 @@ const deleteCategory = async (req, res) => {
         if (!category) {
             throw new Error("Invalid id");
         }
+
+        const checkSubcategory = await SubCategoryModel.find({
+            parentIds: {
+                "$in": [categoryId]
+            }
+        }).countDocuments()
+
+        const checkProduct = await ProductModel.find({
+            catId: {
+                "$in": [categoryId]
+            }
+        }).countDocuments()
+
+        if (checkSubcategory > 0 || checkProduct > 0) {
+           throw new Error("Category already in use, can't delete it");
+       }
 
         const existingImage = await CategoryModel.findById(categoryId).select("images -_id")
 

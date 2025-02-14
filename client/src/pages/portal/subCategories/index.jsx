@@ -9,43 +9,45 @@ import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 
 
-import { deleteCategoryByIdApi, getCategoriesApi } from '../../../api/backendApi';
+import { deleteSubCategoryByIdApi, getSubCategoriesApi } from '../../../api/backendApi';
 import Loader from "../../../components/Loader"
 import ConfirmationAlert from "../../../components/portal/ConfirmationAlert"
 import { toast } from 'react-toastify';
+import ImageView from '../../../components/portal/ImageView';
 
 const index = () => {
 
     let [page, setPage] = useState(1)
     let [isOpenConfirmAlert, setIsOpenConfirmAlert] = useState(false)
+    let [imageUrl, setImageUrl] = useState()
     let [deleteCategoryId, setDeleteCategoryId] = useState({
-        id:""
+        id: ""
     })
-    
-    const { data, isPending , refetch} = useQuery({
+
+    const { data, isPending, refetch } = useQuery({
         queryKey: ['posts', page],
-        queryFn: () => getCategoriesApi(page)
+        queryFn: () => getSubCategoriesApi(page)
     })
-    let categories = data?.data?.data
+    let subCategories = data?.data?.data
     let pagination = data?.data
-  
+
     // if (isPending) return (<Loader />)
     //   if( postQuery.isError ) return (<h1>Error loading data!!!</h1>)
 
     const handleDelete = async (id) => {
         try {
-                      
-            const response = await deleteCategoryByIdApi(deleteCategoryId)
-            if (response.status == 200) { 
-                setIsOpenConfirmAlert(false)
+
+            const response = await deleteSubCategoryByIdApi(deleteCategoryId)
+            if (response.status == 200) {
                 refetch()
-                toast.success("Category added")
+                setIsOpenConfirmAlert(false)
+                toast.success("Category deleted")
             }
         } catch (error) {
             toast.error(error.response.data.message)
             setIsOpenConfirmAlert(false)
         }
-}
+    }
     return (
         <>
 
@@ -71,9 +73,9 @@ const index = () => {
                             className="ti-btn bg-white dark:bg-bodybg border border-defaultborder dark:border-defaultborder/10 btn-wave !my-0">
                             <i className="ri-filter-3-line align-middle me-1 leading-none"></i> Filter
                         </button> */}
-                            <Link to={"/admin/add-category"} className="ti-btn ti-btn-primary !border-0 btn-wave me-0">
+                            <Link to={"/admin/add-sub-category"} className="ti-btn ti-btn-primary !border-0 btn-wave me-0">
                                 <FaPlus className=" me-1" />
-                                Add Category
+                                Add Sub Category
                             </Link>
                         </div>
                     </div>
@@ -98,6 +100,7 @@ const index = () => {
                                                             id="all-products" value="" aria-label="..." />
                                                     </th>
                                                     <th scope="col">Category</th>
+                                                    <th scope="col">Parent Category</th>
 
                                                     <th scope="col">Status</th>
 
@@ -106,7 +109,7 @@ const index = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {categories && categories?.map((item, index) =>
+                                                {subCategories && subCategories?.map((item, index) =>
                                                     <tr key={index}
                                                         className="product-list border-b !border-defaultborder dark:!border-defaultborder/10">
                                                         <td className="product-checkbox"><input className="form-check-input"
@@ -115,7 +118,8 @@ const index = () => {
                                                             <div className="flex">
                                                                 <span className="avatar avatar-md avatar-square bg-light"><img
                                                                     src={item.images[0]}
-                                                                    className="w-full h-full" alt={item.name} /></span>
+                                                                    className="w-full h-full" alt={item.name}
+                                                                    onClick={() => { setImageUrl(item.images[0]) }} /></span>
                                                                 <div className="ms-2">
                                                                     <p className="font-semibold mb-0 flex items-center"><a
                                                                         href="#"> "{item.name}"</a></p>
@@ -125,7 +129,18 @@ const index = () => {
                                                                 </div>
                                                             </div>
                                                         </td>
+                                                        <td>
+                                                            <div className="flex">
 
+                                                                <div className="ms-2">
+                                                                    <p className="font-semibold mb-0 flex items-center"><a
+                                                                        href="#"> {item.categories.map(u => u.name).join(', ')}</a></p>
+                                                                    <p
+                                                                        className="text-xs text-textmuted dark:text-textmuted/50 mb-0">
+                                                                        SoundWave</p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
 
                                                         <td><span className="badge bg-primary/10 text-primary">Published</span></td>
 
@@ -133,7 +148,7 @@ const index = () => {
 
                                                         <td>
                                                             <div className="flex flex-row items-center !gap-2 text-[0.9375rem]">
-                                                                <Link aria-label="anchor" to={`/admin/edit-category/${item._id}`}
+                                                                <Link aria-label="anchor" to={`/admin/edit-sub-category/${item._id}`}
                                                                     className="ti-btn btn-wave !py-2  ti-btn-sm ti-btn-soft-primary waves-effect waves-light"><RiEdit2Line />
                                                                 </Link>
                                                                 <button type='button' onClick={() => {
@@ -194,7 +209,7 @@ const index = () => {
                                                     </div>
                                                 </td>
                                             </tr> */}
-                                                {!categories?.length &&
+                                                {!subCategories?.length &&
                                                     <tr
                                                         className="product-list border-b !border-defaultborder dark:!border-defaultborder/10">
 
@@ -224,7 +239,7 @@ const index = () => {
                                         <div className="ms-auto my-2">
                                             <nav aria-label="" className="">
                                                 <ul className="ti-pagination mb-0 !p-0 justify-end float-end">
-                                                    <li className="page-item disabled"> <button type='button' onClick={() => setPage((prev) => prev - 1)}  disabled={page == 1 ?true:false }
+                                                    <li className="page-item disabled"> <button type='button' onClick={() => setPage((prev) => prev - 1)} disabled={page == 1 ? true : false}
                                                         className="page-link px-3 py-[0.375rem] !text-[1rem] bg-white dark:bg-bodybg !border-e-0 !rounded-tr-none !rounded-br-none">Previous</button>
                                                     </li>
                                                     {new Array(pagination?.pages).fill("_").map((_, no) =>
@@ -270,6 +285,8 @@ const index = () => {
             </div></div>)}
 
             {isOpenConfirmAlert && <ConfirmationAlert confirm={handleDelete} close={setIsOpenConfirmAlert} />}
+
+            {imageUrl && <ImageView url={imageUrl} close={setImageUrl} />}
         </>
     )
 }

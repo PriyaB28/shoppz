@@ -24,8 +24,12 @@ const menuData = [
         key: "category",
         label: "Category",
         link:"category"
-        
     },
+    {
+        key: "sub-category",
+        label: "Sub-Category",
+        link:"sub-category"
+    }
 ];
 
 const Sidebar = () => {
@@ -47,12 +51,12 @@ const Sidebar = () => {
 
 
 
-        const toggleMenu = (menuKey) => {
-            setOpenMenus((prev) => ({
-                ...prev,
-                [menuKey]: !prev[menuKey],
-            }));
-        };
+        // const toggleMenu = (menuKey) => {
+        //     setOpenMenus((prev) => ({
+        //         ...prev,
+        //         [menuKey]: !prev[menuKey],
+        //     }));
+        // };
         const handleResize = () => {
             console.log(window.innerWidth);
 
