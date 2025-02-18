@@ -9,6 +9,10 @@ const productSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    features: {
+        type: String,
+        required: true,
+    },
     images: [
         {
             type: String,
@@ -19,24 +23,29 @@ const productSchema = mongoose.Schema({
         type: String,
         default: ''
     },
+    afterDiscountPrice: {
+        type: Number,
+        default: 0
+    },
     price: {
         type: Number,
         default: 0
     },
-    oldPrice: {
+    discount: {
         type: Number,
-        default: 0
+        required: true
     },
-    catId: [
+    categories: [
         {
             type: mongoose.Schema.ObjectId,
             ref: "Category",
             default: ''
         }
     ],
-    subCatId: [
+    subCategories: [
         {
             type: String,
+            ref: "SubCategory",
             default: ''
         }
     ],
@@ -44,7 +53,7 @@ const productSchema = mongoose.Schema({
         type: String,
         default: ''
     },
-    countInStock: {
+    stockCount: {
         type: Number,
         required: true
     },
@@ -56,9 +65,9 @@ const productSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    discount: {
-        type: Number,
-        required: true
+    publish: {
+        type: Boolean,
+        default:false
     },
     productRam: [
         {

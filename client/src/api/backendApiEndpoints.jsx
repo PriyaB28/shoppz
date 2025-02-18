@@ -81,7 +81,22 @@ const backendApiEndpoints = {
     deleteSubCategory: {
         url: "/api/sub-category",
         method:"delete"
-    }
+    },
+    addProduct: {
+        url: "api/product",
+        method: "post"
+    },
+    products: {
+        url: "api/product"
+    },
+    productById: {
+        url: "api/product",
+        method:"get"
+    },
+    updateProduct: {
+        url: "api/product",
+        method:"put"
+    },
 }
 
 export default backendApiEndpoints

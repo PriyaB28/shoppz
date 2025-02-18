@@ -29,6 +29,7 @@ const index = () => {
         queryFn: () => getSubCategoriesApi(page)
     })
     let subCategories = data?.data?.data
+    
     let pagination = data?.data
 
     // if (isPending) return (<Loader />)
@@ -109,7 +110,7 @@ const index = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {subCategories && subCategories?.map((item, index) =>
+                                                {subCategories?.map((item, index) =>
                                                     <tr key={index}
                                                         className="product-list border-b !border-defaultborder dark:!border-defaultborder/10">
                                                         <td className="product-checkbox"><input className="form-check-input"
@@ -134,7 +135,7 @@ const index = () => {
 
                                                                 <div className="ms-2">
                                                                     <p className="font-semibold mb-0 flex items-center"><a
-                                                                        href="#"> {item.categories.map(u => u.name).join(', ')}</a></p>
+                                                                        href="#"> {item?.categories?.map(u => u.name).join(', ')}</a></p>
                                                                     <p
                                                                         className="text-xs text-textmuted dark:text-textmuted/50 mb-0">
                                                                         SoundWave</p>

@@ -9,6 +9,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 // import Footer from './components/Footer'
 import AdminLayout from "./pages/portal/layout/Layout";
 import Product from "./pages/portal/products";
+import ProductForm from "./pages/portal/products/Form";
 import Category from "./pages/portal/categories";
 import CategoryForm from "./pages/portal/categories/Form";
 import SubCategory from "./pages/portal/subCategories";
@@ -80,6 +81,10 @@ function App() {
             <Route path="sub-category" element={<SubCategory />} />
             <Route path="add-sub-category" element={<SubCategoryForm />} />
             <Route path="edit-sub-category/:id" element={<SubCategoryForm />} />
+
+            <Route path="product" element={<Product />} />
+            <Route path="add-product" element={<ProductForm />} />
+            <Route path="edit-product/:id" element={<ProductForm />} />
             
           </Route>
           <Route path="/" element={<Layout />}>

@@ -1,265 +1,307 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useQuill } from 'react-quilljs';
+import { Link } from 'react-router'
 
-import ReactDOM from 'react-dom'
-import { FilePond, registerPlugin } from 'react-filepond'
-import 'filepond/dist/filepond.min.css'
-import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
-
-// Register the plugins
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
-// or const { useQuill } = require('react-quilljs');
+import { FaPlus } from "react-icons/fa6";
+import { FaAngleDoubleRight } from 'react-icons/fa';
+import { RiEdit2Line } from "react-icons/ri";
+import { RiDeleteBinLine } from "react-icons/ri";
+import { useQuery } from '@tanstack/react-query';
+import moment from 'moment';
 
 
-import 'quill/dist/quill.snow.css';
+import { deleteSubCategoryByIdApi, getProductsApi } from '../../../api/backendApi';
+import Loader from "../../../components/Loader"
+import ConfirmationAlert from "../../../components/portal/ConfirmationAlert"
+import { toast } from 'react-toastify';
+import ImageView from '../../../components/portal/ImageView';
 
 const index = () => {
 
-    const { quill, quillRef } = useQuill();
-    const featureRef = useRef();
+    let [page, setPage] = useState(1)
+    let [isOpenConfirmAlert, setIsOpenConfirmAlert] = useState(false)
+    let [imageUrl, setImageUrl] = useState()
+    let [deleteCategoryId, setDeleteProductId] = useState({
+        id: ""
+    })
 
-    const [files, setFiles] = useState([])
+    const { data, isPending, refetch } = useQuery({
+        queryKey: ['posts', page],
+        queryFn: () => getProductsApi(page)
+    })
+    let products = data?.data?.data
+    let pagination = data?.data
 
-    useEffect(() => {
-        if (featureRef?.current?.firstChild) {
+    // if (isPending) return (<Loader />)
+    //   if( postQuery.isError ) return (<h1>Error loading data!!!</h1>)
 
-            const children = Array.from(
-                featureRef.current?.childNodes
-            )
+    const handleDelete = async (id) => {
+        try {
 
-            const duplicateTooltips = children.filter((el) => {
-                return el.classList.contains('ql-toolbar');
-            });
-            if (duplicateTooltips.length > 1) {
-                duplicateTooltips[0].remove();
+            const response = await deleteSubCategoryByIdApi(deleteCategoryId)
+            if (response.status == 200) {
+                refetch()
+                setIsOpenConfirmAlert(false)
+                toast.success("Category deleted")
             }
+        } catch (error) {
+            toast.error(error.response.data.message)
+            setIsOpenConfirmAlert(false)
         }
-    }, [featureRef.current, quill]);
-
+    }
+    const title = "Product"
     return (
-        <div className="main-content app-content">
-            <div className="container-fluid">
+        <>
 
-                {/* <!-- Page Header --> */}
-                <div className="flex items-center justify-between page-header-breadcrumb flex-wrap gap-2">
-                    <div>
-                        <nav>
-                            <ol className="breadcrumb mb-1">
-                                <li className="breadcrumb-item"><a href="#">Apps</a></li>
-                                <li className="breadcrumb-item"><a href="#">Ecommerce</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">Add Product</li>
-                            </ol>
-                        </nav>
-                        <h1 className="page-title font-medium text-lg mb-0">Add Product</h1>
-                    </div>
-                    <div className="btn-list">
-                        <button className="ti-btn bg-white dark:bg-bodybg border border-defaultborder dark:border-defaultborder/10 btn-wave !my-0">
+            <div className="main-content app-content">
+                <div className="container-fluid">
+
+                    {/* <!-- Page Header --> */}
+                    <div className="flex items-center justify-between page-header-breadcrumb flex-wrap gap-2">
+                        <div>
+                            <nav>
+                                <ol className="breadcrumb mb-1 flex items-center gap-1 flex-wrap ">
+                                    <li className="breadcrumb-item"><a href="#">Apps</a>
+                                    </li>
+
+                                    <FaAngleDoubleRight />
+                                    <li className="breadcrumb-item active" aria-current="page">{title}</li>
+                                </ol>
+                            </nav>
+                            <h1 className="page-title font-medium text-lg mb-0">{title} List</h1>
+                        </div>
+                        <div className="btn-list">
+                            {/* <button
+                            className="ti-btn bg-white dark:bg-bodybg border border-defaultborder dark:border-defaultborder/10 btn-wave !my-0">
                             <i className="ri-filter-3-line align-middle me-1 leading-none"></i> Filter
-                        </button>
-                        <button className="ti-btn ti-btn-primary !border-0 btn-wave me-0">
-                            <i className="ri-share-forward-line me-1"></i> Share
-                        </button>
+                        </button> */}
+                            <Link to={"/admin/add-product"} className="ti-btn ti-btn-primary !border-0 btn-wave me-0">
+                                <FaPlus className=" me-1" />
+                                Add {title}
+                            </Link>
+                        </div>
                     </div>
-                </div>
-                {/* <!-- Page Header Close --> */}
+                    {/* <!-- Page Header Close --> */}
 
-                {/* <!-- Start::row-1 --> */}
-                <div className="grid grid-cols-12 gap-x-6">
-                    <div className="xl:col-span-12 col-span-12">
-                        <div className="box">
-                            <div className="box-body add-products">
-                                <div className="grid grid-cols-12 sm:gap-x-6 gap-y-5">
-                                    <div className="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
-                                        <div className="box shadow-none mb-0 border-0">
-                                            <div className="box-body p-0">
-                                                <div className="grid grid-cols-12 sm:gap-x-6 gap-y-3">
-                                                    <div className="xl:col-span-12 col-span-12">
-                                                        <label htmlFor="product-name-add" className="form-label">Product Name</label>
-                                                        <input type="text" className="form-control" id="product-name-add" placeholder="Name" />
-                                                        <label htmlFor="product-name-add" className="form-label mt-1 text-xs font-normal text-textmuted dark:text-textmuted/50 mb-0">*Product Name should not exceed 30 characters</label>
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12">
-                                                        <label htmlFor="product-size-add" className="form-label">Size</label>
-                                                        <select className="form-control" data-trigger name="product-size-add" id="product-size-add">
-                                                            <option value="">Select</option>
-                                                            <option value="Extra Small">Extra Small</option>
-                                                            <option value="Small">Small</option>
-                                                            <option value="Medium">Medium</option>
-                                                            <option value="Large">Large</option>
-                                                            <option value="Extra Large">Extra Large</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12">
-                                                        <label htmlFor="product-brand-add" className="form-label">Brand</label>
-                                                        <select className="form-control" data-trigger name="product-brand-add" id="product-brand-add">
-                                                            <option value="">Select</option>
-                                                            <option value="Armani">Armani</option>
-                                                            <option value="Lacoste">Lacoste</option>
-                                                            <option value="Puma">Puma</option>
-                                                            <option value="Spykar">Spykar</option>
-                                                            <option value="Mufti">Mufti</option>
-                                                            <option value="Home Town">Home Town</option>
-                                                            <option value="Arrabi">Arrabi</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12">
-                                                        <label htmlFor="product-category-add" className="form-label">Category</label>
-                                                        <select className="form-control" data-trigger name="product-category-add" id="product-category-add">
-                                                            <option value="">Category</option>
-                                                            <option value="Clothing">Clothing</option>
-                                                            <option value="Footwear">Footwear</option>
-                                                            <option value="Accesories">Accesories</option>
-                                                            <option value="Grooming">Grooming</option>
-                                                            <option value="Ethnic & Festive">Ethnic & Festive</option>
-                                                            <option value="Jewellery">Jewellery</option>
-                                                            <option value="Toys & Babycare">Toys & Babycare</option>
-                                                            <option value="Festive Gifts">Festive Gifts</option>
-                                                            <option value="Kitchen">Kitchen</option>
-                                                            <option value="Dining">Dining</option>
-                                                            <option value="Home Decors">Home Decors</option>
-                                                            <option value="Stationery">Stationery</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12">
-                                                        <label htmlFor="product-gender-add" className="form-label">Gender</label>
-                                                        <select className="form-control" data-trigger name="product-gender-add" id="product-gender-add">
-                                                            <option value="">Select</option>
-                                                            <option value="All">All</option>
-                                                            <option value="Male">Male</option>
-                                                            <option value="Female">Female</option>
-                                                            <option value="Others">Others</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12 color-selection">
-                                                        <label htmlFor="product-color-add" className="form-label">Colors</label>
-                                                        <select className="form-control" name="product-color-add" id="product-color-add" multiple>
-                                                            <option value="White">White</option>
-                                                            <option value="Black">Black</option>
-                                                            <option value="Red">Red</option>
-                                                            <option value="Orange">Orange</option>
-                                                            <option value="Yellow">Yellow</option>
-                                                            <option value="Green">Green</option>
-                                                            <option value="Blue">Blue</option>
-                                                            <option value="Pink">Pink</option>
-                                                            <option value="Purple">Purple</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12">
-                                                        <label htmlFor="product-cost-add" className="form-label">Enter Cost</label>
-                                                        <input type="text" className="form-control" id="product-cost-add" placeholder="Cost" />
-                                                        <label htmlFor="product-cost-add" className="form-label mt-1 text-xs font-normal text-textmuted dark:text-textmuted/50 mb-0">*Mention final price of the product</label>
-                                                    </div>
-                                                    <div className="xl:col-span-12 col-span-12">
-                                                        <label htmlFor="product-description-add" className="form-label">Product Description</label>
-                                                        <textarea className="form-control" id="product-description-add" rows="3"></textarea>
-                                                        <label htmlFor="product-description-add" className="form-label mt-1 text-xs font-normal text-textmuted dark:text-textmuted/50 mb-0">*Description should not exceed 500 letters</label>
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12">
-                                                        <label htmlFor="product-type" className="form-label">Product Type</label>
-                                                        <input type="text" className="form-control" id="product-type" placeholder="Type" />
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12">
-                                                        <label htmlFor="product-discount" className="form-label">Item Weight</label>
-                                                        <input type="text" className="form-control" id="product-discount1" placeholder="Weight in gms" />
-                                                    </div>
-                                                    <div className="xl:col-span-12 col-span-12 product-documents-container">
-                                                        <p className="font-medium mb-2 text-[14px]">Product Images :</p>
-                                                        {/* <input type="file" className="product-Images" name="filepond" multiple data-allow-reorder="true" data-max-file-size="3MB" data-max-files="6" /> */}
-                                                        <FilePond
-                                                            files={files}
-                                                            onupdatefiles={setFiles}
-                                                            allowMultiple={true}
-                                                            maxFiles={3}
-                                                            server="/api"
-                                                            name="files" /* sets the file input name, it's filepond by default */
-                                                            labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
-                                                        />
-                                                        <label className="form-label text-textmuted dark:text-textmuted/50 mt-3 font-normal text-xs">* Minimum of 6 images are need to be uploaded,
-                                                            all images should be uniformly maintained, width and height to the container.
-                                                        </label>
-                                                    </div>
-                                                    <div className="xl:col-span-12 col-span-12">
-                                                        <label htmlFor="product-status-add1" className="form-label">Availability</label>
-                                                        <select className="form-control" data-trigger name="product-status-add1" id="product-status-add1">
-                                                            <option value="">Select</option>
-                                                            <option value="In Stock">In Stock</option>
-                                                            <option value="Out Of Stock">Out Of Stock</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                    {/* <!-- Start::row-1 --> */}
+                    <div className="row">
+                        <div className="col-xl-12">
+                            <div className="box">
+                                <div className="box-header">
+                                    <div className="box-title">
+                                        {title} List
                                     </div>
-                                    <div className="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
-                                        <div className="box shadow-none mb-0 border-0">
-                                            <div className="box-body p-0">
-                                                <div className="grid grid-cols-12 sm:gap-x-6 gap-y-3">
-                                                    <div className="xl:col-span-12 col-span-12">
-                                                        <label className="form-label">Product Features</label>
-                                                        <div id="product-features" style={{  height: 200 }} ref={featureRef}>
-                                                            <div ref={quillRef} />
+                                </div>
+                                <div className="box-body">
+                                    <div className="table-responsive overflow-auto table-bordered-default">
+                                        <table className="ti-custom-table text-nowrap">
+                                            <thead>
+                                                <tr className="border-b !border-defaultborder dark:!border-defaultborder/10">
+                                                    <th scope="col" className="!text-start">
+                                                        <input className="form-check-input check-all" type="checkbox"
+                                                            id="all-products" value="" aria-label="..." />
+                                                    </th>
+                                                    <th scope="col">Product</th>
+                                                    <th scope="col">Category</th>
+                                                    <th scope="col">Sub-Category</th>
+
+                                                    <th scope="col">Status</th>
+
+                                                    <th scope="col">Published</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {products && products?.map((item, index) =>
+                                                    <tr key={index}
+                                                        className="product-list border-b !border-defaultborder dark:!border-defaultborder/10">
+                                                        <td className="product-checkbox"><input className="form-check-input"
+                                                            type="checkbox" id="product1" value="" aria-label="..." /></td>
+                                                        <td>
+                                                            <div className="flex">
+                                                                <span className="avatar avatar-md avatar-square bg-light"><img
+                                                                    src={item.images[0]}
+                                                                    className="w-full h-full" alt={item.name}
+                                                                    onClick={() => { setImageUrl(item.images[0]) }} /></span>
+                                                                <div className="ms-2">
+                                                                    <p className="font-semibold mb-0 flex items-center"><a
+                                                                        href="#"> {item.name}</a></p>
+                                                                    <p
+                                                                        className="text-xs text-textmuted dark:text-textmuted/50 mb-0">
+                                                                        SoundWave</p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div className="flex">
+
+                                                                <div className="ms-2">
+                                                                    <p className="font-semibold mb-0 flex items-center"><a
+                                                                        href="#"> {item?.categories?.map(u => u.name).join(', ')}</a></p>
+                                                                    <p
+                                                                        className="text-xs text-textmuted dark:text-textmuted/50 mb-0">
+                                                                        SoundWave</p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div className="flex">
+
+                                                                <div className="ms-2">
+                                                                    <p className="font-semibold mb-0 flex items-center"><a
+                                                                        href="#"> {item?.subCategories?.map(u => u.name).join(', ')}</a></p>
+                                                                    <p
+                                                                        className="text-xs text-textmuted dark:text-textmuted/50 mb-0">
+                                                                        SoundWave</p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                        <td><span className="badge bg-primary/10 text-primary">Published</span></td>
+
+                                                        <td>{moment(item.createdAt).format("D,MMM YYYY - h:mmA")}</td>
+
+                                                        <td>
+                                                            <div className="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                                                <Link aria-label="anchor" to={`/admin/edit-product/${item._id}`}
+                                                                    className="ti-btn btn-wave !py-2  ti-btn-sm ti-btn-soft-primary waves-effect waves-light"><RiEdit2Line />
+                                                                </Link>
+                                                                <button type='button' onClick={() => {
+                                                                    setIsOpenConfirmAlert(true)
+                                                                    setDeleteProductId(item._id)
+                                                                }
+                                                                } aria-label="anchor" href="#"
+                                                                    className="ti-btn btn-wave product-btn ti-btn-sm !py-2 ti-btn-soft-danger waves-effect waves-light"><RiDeleteBinLine />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                                {/* <tr
+                                                className="product-list border-b !border-defaultborder dark:!border-defaultborder/10">
+                                                <td className="product-checkbox"><input className="form-check-input"
+                                                    type="checkbox" id="product2" value="" aria-label="..." /></td>
+                                                <td>
+                                                    <div className="flex">
+                                                        <span className="avatar avatar-md avatar-square bg-light"><img
+                                                            src="../assets/images/ecommerce/png/14.png"
+                                                            className="w-full h-full" alt="..." /></span>
+                                                        <div className="ms-2">
+                                                            <p className="font-semibold mb-0 flex items-center"><a
+                                                                href="#"> Elegant
+                                                                Flower Pot</a></p>
+                                                            <p
+                                                                className="text-xs text-textmuted dark:text-textmuted/50 mb-0">
+                                                                Serene Garden</p>
                                                         </div>
                                                     </div>
-                                                    <div className="xl:col-span-12 col-span-12 product-documents-container">
-                                                        <p className="font-medium mb-2 text-[14px]">Warrenty Documents :</p>
-                                                        <input type="file" className="product-documents" name="filepond" multiple data-allow-reorder="true" data-max-file-size="3MB" data-max-files="6" />
+                                                </td>
+                                                <td>
+                                                    <span>Ceramic</span>
+                                                </td>
+                                                <td>$799</td>
+                                                <td>98</td>
+                                                <td>
+                                                    <span className="badge bg-danger/10 text-danger">Unpublished</span>
+                                                </td>
+                                                <td>
+                                                    <div className="flex items-center font-semibold">
+                                                        <span className="avatar avatar-sm p-1 bg-light me-2 avatar-rounded">
+                                                            <img src="../assets/images/faces/15.jpg" alt="" />
+                                                        </span>
+                                                        <a href="#">Andrew Garfield </a>
                                                     </div>
-                                                    <div className="xl:col-span-4 col-span-12">
-                                                        <label htmlFor="product-actual-price" className="form-label">Actual Price</label>
-                                                        <input type="text" className="form-control" id="product-actual-price" placeholder="Actual Price" />
+                                                </td>
+                                                <td>18,Nov 2023 - 06:53AM</td>
+                                                <td>
+                                                    <div className="flex flex-row items-center !gap-2 text-[0.9375rem]">
+                                                        <a aria-label="anchor" href="edit-products.html"
+                                                            className="ti-btn btn-wave  ti-btn-sm ti-btn-soft-primary waves-effect waves-light"><i
+                                                                className="ri-edit-line"></i></a>
+                                                        <a aria-label="anchor" href="#"
+                                                            className="ti-btn btn-wave product-btn ti-btn-sm ti-btn-soft-danger waves-effect waves-light"><i
+                                                                className="ri-delete-bin-line"></i></a>
                                                     </div>
-                                                    <div className="xl:col-span-4 col-span-12">
-                                                        <label htmlFor="product-dealer-price" className="form-label">Dealer Price</label>
-                                                        <input type="text" className="form-control" id="product-dealer-price" placeholder="Dealer Price" />
-                                                    </div>
-                                                    <div className="xl:col-span-4 col-span-12">
-                                                        <label htmlFor="product-discount" className="form-label">Discount</label>
-                                                        <input type="text" className="form-control" id="product-discount" placeholder="Discount in %" />
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12">
-                                                        <label htmlFor="publish-date" className="form-label">Publish Date</label>
-                                                        <input type="text" className="form-control" id="publish-date" placeholder="Choose date" />
-                                                    </div>
-                                                    <div className="xl:col-span-6 col-span-12">
-                                                        <label htmlFor="publish-time" className="form-label">Publish Time</label>
-                                                        <input type="text" className="form-control" id="publish-time" placeholder="Choose time" />
-                                                    </div>
-                                                    <div className="xl:col-span-12 col-span-12">
-                                                        <label htmlFor="product-status-add" className="form-label">Published Status</label>
-                                                        <select className="form-control" data-trigger name="product-status-add" id="product-status-add">
-                                                            <option value="">Select</option>
-                                                            <option value="Published">Published</option>
-                                                            <option value="Scheduled">Scheduled</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="xl:col-span-12 col-span-12">
-                                                        <label htmlFor="product-tags" className="form-label">Product Tags</label>
-                                                        <select className="form-control" name="product-tags" id="product-tags" multiple>
-                                                            <option value="Relaxed" >Relaxed</option>
-                                                            <option value="Solid">Solid</option>
-                                                            <option value="Washed">Washed</option>
-                                                            <option value="Plain" >Plain</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                </td>
+                                            </tr> */}
+                                                {!products?.length &&
+                                                    <tr
+                                                        className="product-list border-b !border-defaultborder dark:!border-defaultborder/10">
+
+                                                        <td colSpan={7}>
+                                                            <div className="flex justify-center">
+
+                                                                <div className="ms-2">
+                                                                    <p className="font-semibold mb-0 flex items-center"><a
+                                                                        href="#"> No Records</a></p>
+
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div className="box-footer">
+                                    <div className="flex items-center flex-wrap overflow-auto">
+                                        {/* <div className="mt-2">
+                                            Showing <b>{showing}</b> to <b>{pagination?.limit}</b> of <b>{pagination?.total}</b> entries <i
+                                                className="bi bi-arrow-right ms-2 font-semibold"></i>
+                                        </div> */}
+                                        <div className="ms-auto my-2">
+                                            <nav aria-label="" className="">
+                                                <ul className="ti-pagination mb-0 !p-0 justify-end float-end">
+                                                    <li className="page-item disabled"> <button type='button' onClick={() => setPage((prev) => prev - 1)} disabled={page == 1 ? true : false}
+                                                        className="page-link px-3 py-[0.375rem] !text-[1rem] bg-white dark:bg-bodybg !border-e-0 !rounded-tr-none !rounded-br-none">Previous</button>
+                                                    </li>
+                                                    {new Array(pagination?.pages).fill("_").map((_, no) =>
+                                                    (
+                                                        <li key={no} className="page-item " aria-current="page"> <button type='button' onClick={() => setPage(no + 1)}
+                                                            className={`${page == (no + 1) ? "active" : ""}  page-link  px-3 py-[0.375rem] !text-[1rem] bg-white dark:bg-bodybg !rounded-none !border-e-0`}
+                                                            href="#">{no + 1}</button> </li>
+                                                    ))}
+                                                    {/* <li className="page-item"><a
+                                                        className="page-link px-3 py-[0.375rem] !text-[1rem] bg-white dark:bg-bodybg !rounded-none !border-e-0"
+                                                        href="#">1</a></li> */}
+
+                                                    {/* <li className="page-item"><a
+                                                        className="page-link px-3 py-[0.375rem] !text-[1rem] bg-white dark:bg-bodybg !rounded-none !border-e-0"
+                                                        href="#">3</a></li>
+                                                    <li className="page-item"><a
+                                                        className="page-link px-3 py-[0.375rem] !text-[1rem] bg-white dark:bg-bodybg !rounded-none !border-e-0"
+                                                        href="#">4</a></li>
+                                                    <li className="page-item"><a
+                                                        className="page-link px-3 py-[0.375rem] !text-[1rem] bg-white dark:bg-bodybg !rounded-none !border-e-0"
+                                                        href="#">5</a></li> */}
+                                                    <li className="page-item"> <button type='button'
+                                                        disabled={page == pagination?.pages ? true : false}
+                                                        onClick={() => setPage((prev) => prev + 1)}
+                                                        className="page-link px-3 py-[0.375rem] !text-[1rem] bg-white dark:bg-bodybg !rounded-tl-none !rounded-bl-none !border-s-0"
+                                                        href="#">Next</button> </li>
+                                                </ul>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="box-footer border-t border-block-start-dashed sm:flex justify-end">
-                                <button className="ti-btn bg-primarytint1color text-white me-2 mb-2 mb-sm-0">Add Product<i className="bi bi-plus-lg ms-2"></i></button>
-                                <button className="ti-btn ti-btn-primary mb-2 mb-sm-0">Save Product<i className="bi bi-download ms-2"></i></button>
-                            </div>
                         </div>
                     </div>
-                </div>
-                {/* <!--End::row-1 --> */}
+                    {/* <!--End::row-1 --> */}
 
+                </div>
             </div>
-        </div>
+            {isPending && (<div className='w-full h-full fixed top-0 left-0 bg-white opacity-75 z-[999]'> <div className="flex justify-center mb-6 mt-[50vh] ">
+                <div className="ti-spinner text-secondary w-16 h-16" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div></div>)}
+
+            {isOpenConfirmAlert && <ConfirmationAlert confirm={handleDelete} close={setIsOpenConfirmAlert} />}
+
+            {imageUrl && <ImageView url={imageUrl} close={setImageUrl} />}
+        </>
     )
 }
 

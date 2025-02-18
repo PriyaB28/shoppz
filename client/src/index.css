@@ -11,3 +11,7 @@ body{
     color: white;
     line-height: 28px;
 }
+
+::-webkit-scrollbar{width: 5px !important;height: 8px !important;}
+::-webkit-scrollbar-thumb{background: #ff7300;}
+::-webkit-scrollbar-track{background: #6a6868;}

@@ -16,8 +16,8 @@ router.get("/", getProducts);  // Get all products
 router.get("/:id", getProductById);  // Get product by ID
 
 // Protected Routes (Requires authentication)
-router.post("/", verifyToken, upload.array("productImages"), createProduct); 
-router.put("/:id", verifyToken, upload.array("productImages"), updateProduct);  
-router.delete("/:id", verifyToken, deleteProduct); 
+router.post("/", verifyToken, upload.array("productImages"), createProduct);
+router.put("/", verifyToken, upload.array("productImages"), updateProduct);
+router.delete("/:id", verifyToken, deleteProduct);
 
 export default router;
