@@ -13,11 +13,13 @@ import { deleteCategoryByIdApi, getCategoriesApi } from '../../../api/backendApi
 import Loader from "../../../components/Loader"
 import ConfirmationAlert from "../../../components/portal/ConfirmationAlert"
 import { toast } from 'react-toastify';
+import ImageView from '../../../components/portal/ImageView';
 
 const index = () => {
 
     let [page, setPage] = useState(1)
     let [isOpenConfirmAlert, setIsOpenConfirmAlert] = useState(false)
+     let [imageUrl, setImageUrl] = useState()
     let [deleteCategoryId, setDeleteCategoryId] = useState({
         id:""
     })
@@ -39,7 +41,7 @@ const index = () => {
             if (response.status == 200) { 
                 setIsOpenConfirmAlert(false)
                 refetch()
-                toast.success("Category added")
+                toast.success("Category deleted")
             }
         } catch (error) {
             toast.error(error.response.data.message)
@@ -115,7 +117,8 @@ const index = () => {
                                                             <div className="flex">
                                                                 <span className="avatar avatar-md avatar-square bg-light"><img
                                                                     src={item.images[0]}
-                                                                    className="w-full h-full" alt={item.name} /></span>
+                                                                    className="w-full h-full" alt={item.name}
+                                                                    onClick={() => { setImageUrl(item.images[0]) }} /></span>
                                                                 <div className="ms-2">
                                                                     <p className="font-semibold mb-0 flex items-center"><a
                                                                         href="#"> "{item.name}"</a></p>
@@ -270,6 +273,7 @@ const index = () => {
             </div></div>)}
 
             {isOpenConfirmAlert && <ConfirmationAlert confirm={handleDelete} close={setIsOpenConfirmAlert} />}
+            {imageUrl && <ImageView url={imageUrl} close={setImageUrl} />}
         </>
     )
 }

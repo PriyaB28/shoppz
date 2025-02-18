@@ -76,7 +76,20 @@ const Form = () => {
         onSubmit: async (values) => {
 
             let data = new FormData();
-
+            if (id) {
+                values.categoryImages.map((image, index) => {
+                    let filename = image.file.name;
+                    if (image.file instanceof File == false) {
+                        let lastIndex = image.file.name.lastIndexOf("-");
+                        let fileExt = image.file.name.split('.').pop();
+                        filename = image.file.name.slice(0, lastIndex) + "." + fileExt
+                    }
+                    const myFile = new File([image.file], filename, {
+                        type: image.file.type,
+                    });
+                    values.categoryImages[index].setFile(myFile)
+                })
+            }
             values.categoryImages.forEach((file) => {
                 data.append("categoryImages", file.file)
             });
@@ -139,7 +152,7 @@ const Form = () => {
                                                             }
                                                         </div>
 
-                                                        <div className="xl:col-span-6 col-span-12">
+                                                        {/* <div className="xl:col-span-6 col-span-12">
                                                             <label htmlFor="product-category-add" className="form-label">Category</label>
                                                             <select className="form-control" data-trigger name="product-category-add" id="product-category-add">
                                                                 <option value="">Category</option>
@@ -156,7 +169,7 @@ const Form = () => {
                                                                 <option value="Home Decors">Home Decors</option>
                                                                 <option value="Stationery">Stationery</option>
                                                             </select>
-                                                        </div>
+                                                        </div> */}
 
                                                         {/* <div className="xl:col-span-12 col-span-12">
                                                         <label htmlFor="product-description-add" className="form-label">Product Description</label>

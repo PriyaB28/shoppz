@@ -1,5 +1,14 @@
 import CategoryModel from "../models/category.model.js";
+import ProductModel from "../models/product.model.js";
 import Product from "../models/product.model.js";
+
+import path from "path"
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import fs from "fs"
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * @desc    Create a new product
@@ -10,59 +19,12 @@ export const createProduct = async (req, res) => {
     try {
         const images = req.files
 
-        const {
-            name,
-            description,
-            brand,
-            price,
-            oldPrice,
-            catName,
-            catId,
-            subCatId,
-            subCatName,
-            thirdSubCatName,
-            thirdSubCatId,
-            countInStock,
-            rating,
-            isFeatured,
-            discount,
-            productRam,
-            size,
-            productWeight,
-        } = req.body;
+        const data = req.body;
 
         // const category = await CategoryModel.findById(catId);
         // if (!category) {
         //     return res.status(404).json({ success: false, message: "Category not found" });
         // }
-        const payload = {
-            name,
-            description,
-            brand,
-            price,
-            oldPrice,
-            catName,
-            catId,
-            subCatId,
-            subCatName,
-            thirdSubCatName,
-            thirdSubCatId,
-            countInStock,
-            rating,
-            isFeatured,
-            discount,
-            productRam,
-            size,
-            productWeight,
-        };
-
-        const product = new Product(payload);
-        await product.save();
-        console.log("test");
-
-        if (!product) {
-            throw new Error("Unable to save product");
-        }
 
         let imageURL = [];
         for (let i = 0; i < images.length; i++) {
@@ -71,16 +33,16 @@ export const createProduct = async (req, res) => {
 
             imageURL.push(updatedURL);
         }
+        const payload = {
+            ...data, images: imageURL
+        };
 
-        const updateProduct = await Product.findByIdAndUpdate(product._id, {
-            images: imageURL
-        })
-        console.log({
-            images: imageURL
-        });
 
-        if (!updateProduct) {
-            throw new Error("Unable to add images");
+        const product = new Product(payload);
+        await product.save();
+
+        if (!product) {
+            throw new Error("Unable to save product");
         }
 
         res.status(201).json({
@@ -104,9 +66,15 @@ export const createProduct = async (req, res) => {
 export const getProducts = async (req, res) => {
     try {
 
-        let pageNo = parseInt(req.query.pageNo) || 1
-        let pageLimit = parseInt(req.query.pageNo) || 10
-        const products = await Product.find().skip().limit()
+        const page = req.query.page || 1;
+        const limit = req.query.limit || 5;
+
+        // Calculate the offset
+        const offset = (page - 1) * limit;
+        const products = await Product.find().populate('categories').populate("subCategories").skip(offset)
+            .limit(limit)
+            .exec();
+
         if (!products) {
             throw new Error("Unable to fetch products");
         }
@@ -136,7 +104,7 @@ export const getProductById = async (req, res) => {
         if (!productId) {
             throw new Error("Id not found");
         }
-        const product = await Product.findById(productId);
+        const product = await Product.findById(productId).populate("categories", ["_id", "name"]).populate("subCategories", ["_id", "name"]);
 
         if (!product) {
             return res.status(404).json({
@@ -165,17 +133,22 @@ export const getProductById = async (req, res) => {
 export const updateProduct = async (req, res) => {
     try {
 
-        const productId = req.params.id
-        if (!productId) {
-            throw new Error("Id not found");
+        const data = req.body
+        const images = req.files
+
+        if (!data.id || !data.name) {
+            throw new Error("Please provide data");
         }
 
+        if (!images) {
+            throw new Error("Please provide image");
+        }
         //recommended way
         const productData = req.body;
-        
-        const {images,...payload} = productData
+
+        const { images: img, ...payload } = productData
         const product = await Product.findByIdAndUpdate(
-            productId,
+            payload.id,
             payload,
             { new: true }
         );
@@ -185,6 +158,29 @@ export const updateProduct = async (req, res) => {
                 success: false,
                 message: "Product not found"
             });
+        }
+        if (product.images && product.images.length > 0) {
+            product.images.forEach((imageUrl) => {
+                unlinkImage({
+                    imageUrl,
+                    folder: "/tmp/uploads/product/"
+                }); // Adjust folder path if necessary
+            });
+        }
+
+        let imgUrls = [];
+        for (let i = 0; i < images.length; i++) {
+            const imagePath = images[i].path.replaceAll("\\", "/").replace("tmp", "")
+            let imageURL = req.protocol + '://' + req.get('host') + imagePath;
+            imgUrls.push(imageURL)
+        }
+
+        const productImages = await ProductModel.findByIdAndUpdate(product._id, {
+            images: imgUrls
+        })
+
+        if (!productImages) {
+            throw new Error("Unable to upload Image");
         }
 
         res.status(200).json({

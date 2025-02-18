@@ -18,3 +18,7 @@ export const categorySchema = Yup.object(rest)
 export const subCategorySchema = Yup.object({
     ...validations
 })
+
+export const productSchema = Yup.object({
+    ...validations
+})

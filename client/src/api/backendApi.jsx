@@ -146,7 +146,7 @@ const updateCategoryApi = async (data) => {
 
 const getCategoryByIdApi = async (id) => {
   const url = backendApiEndpoints.categoryById.url + "/" + id;
-  
+
   const response = await axios({
     ...backendApiEndpoints.categoryById,
     url,
@@ -156,7 +156,7 @@ const getCategoryByIdApi = async (id) => {
 
 const deleteCategoryByIdApi = async (id) => {
   const url = backendApiEndpoints.deleteCategory.url + "/" + id;
-  
+
   const response = await axios({
     ...backendApiEndpoints.deleteCategory,
     url,
@@ -187,7 +187,7 @@ const getSubCategoriesApi = async (page = 1, limit = 4) => {
 
 const getSubCategoryByIdApi = async (id) => {
   const url = backendApiEndpoints.subCategoryById.url + "/" + id;
-  
+
   const response = await axios({
     ...backendApiEndpoints.subCategoryById,
     url,
@@ -216,6 +216,46 @@ const deleteSubCategoryByIdApi = async (id) => {
   });
   return response;
 };
+
+const addProductApi = async (data) => {
+  const response = await axios({
+    ...backendApiEndpoints.addProduct,
+    data: data,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
+};
+const getProductsApi = async (page = 1, limit = 4) => {
+  let url = backendApiEndpoints.products.url + `?page=${page}&limit=${limit}`;
+  const response = await axios({
+    ...backendApiEndpoints.products,
+    url,
+  });
+  return response;
+};
+
+const getProductByIdApi = async (id) => {
+  const url = backendApiEndpoints.productById.url + "/" + id;
+  
+  const response = await axios({
+    ...backendApiEndpoints.productById,
+    url,
+  });
+  return response;
+};
+
+const updateProductApi = async (data) => {
+  const response = await axios({
+    ...backendApiEndpoints.updateProduct,
+    data: data,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
+};
 export {
   registerApi,
   forgotPasswordOtpApi,
@@ -237,5 +277,9 @@ export {
   getSubCategoriesApi,
   getSubCategoryByIdApi,
   updateSubCategoryApi,
-  deleteSubCategoryByIdApi
+  deleteSubCategoryByIdApi,
+  addProductApi,
+  getProductsApi,
+  getProductByIdApi,
+  updateProductApi
 };

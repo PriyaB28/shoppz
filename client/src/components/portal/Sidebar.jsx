@@ -29,6 +29,11 @@ const menuData = [
         key: "sub-category",
         label: "Sub-Category",
         link:"sub-category"
+    },
+    {
+        key: "product",
+        label: "Product",
+        link:"product"
     }
 ];
 
