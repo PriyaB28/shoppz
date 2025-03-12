@@ -32,31 +32,50 @@ import { userDetailsApi } from "./api/backendApi";
 import useAuth from "./hooks/useAuth";
 import { setCredentials } from "./redux/authSlice";
 import ProductListing from "./pages/ProductListing";
+import ProductDetails from "./pages/ProductDetails";
+import Cart from "./pages/Cart";
+import { useDispatch } from "react-redux";
+import { getCartItems } from "./redux/cartSlice";
+import Address from "./pages/Address";
+import SellerBanks from "./pages/SellerBanks";
+import Checkout from "./pages/Checkout";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCancel from "./pages/PaymentCancel";
+import Payment from "./pages/Payment";
 
 function App() {
-  const { user, dispatch } = useAuth();
+  const { user, dispatch: userDispatch } = useAuth();
+  const dispatch = useDispatch()
   // const { pathname } = useLocation()
 
   const fetchUserDetails = async () => {
     try {
       const userData = await userDetailsApi();
       if (userData.status == 200) {
-        dispatch(setCredentials(userData.data.data));
+        console.log(userData);
+        
+        userDispatch(setCredentials(userData.data.data));
       }
-      
+
     } catch (error) {
-      dispatch(setCredentials(null));
+      userDispatch(setCredentials(null));
       console.log(error);
-      
+
       // toast.error(error.response.data.message)
     }
   };
 
   useEffect(() => {
-      fetchUserDetails();  
+    fetchUserDetails();
   }, []);
 
-  
+  useEffect(() => {
+    if (user?.userInfo) {
+      dispatch(getCartItems())
+    }
+  }, [user?.userInfo]);
+
+
   const queryClient = new QueryClient();
   return (
     <>
@@ -71,7 +90,7 @@ function App() {
          */}
 
         <Routes>
-          <Route path="/admin"  element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Product />} />
 
             <Route path="category" element={<Category />} />
@@ -85,17 +104,26 @@ function App() {
             <Route path="product" element={<Product />} />
             <Route path="add-product" element={<ProductForm />} />
             <Route path="edit-product/:id" element={<ProductForm />} />
-            
+
           </Route>
+
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/product-listing" element={<ProductListing />} />
+            <Route path="product/:id" element={<ProductDetails />} />
+            <Route path="cart" element={<Cart />} />
+            <Route path="checkout" element={<Checkout />} />
           </Route>
 
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
+            <Route path="/address" element={<Address />} />
             <Route path="/home" element={<Navigate to={"/"} />} />
+            <Route path="bank-accounts" element={<SellerBanks />} />
+            <Route path="payment" element={<Payment />} />
+            <Route path="success" element={<PaymentSuccess />} />
+            <Route path="cancel" element={<PaymentCancel />} />
           </Route>
 
           <Route path="/register" element={<Register />} />
@@ -107,7 +135,7 @@ function App() {
             path="/verify-forgot-email"
             element={<ForgotPasswordOtpVerification />}
           />
-          <Route path="*" element={<NotFound />}/>
+          <Route path="*" element={<NotFound />} />
           {/* <Route element={<PublicRoute />}>
            
           </Route> */}

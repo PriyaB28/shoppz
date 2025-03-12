@@ -8,10 +8,12 @@ import Footer from '../../../components/portal/Footer'
 
 const Layout = () => {
   return (
-    <div className="body page">
+    <div className="body page portal ">
       <Header />
       {/* <Sidebar /> */}
-      <Outlet />
+
+        <Outlet />
+        
       <Footer />
     </div>
   )

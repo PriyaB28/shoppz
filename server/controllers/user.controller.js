@@ -7,6 +7,7 @@ import verifyEmailTemplate from '../utils/verifyEmailTemplate.js'
 import UserModel from "../models/user.model.js";
 import { generateTokenAndCookies } from '../utils/generateTokenAndCookies.js';
 import oauth2Client from '../utils/googleClient.js';
+import Stripe from "../config/stripe.js"
 
 import twilio from "twilio"
 import fs from "fs"
@@ -53,7 +54,13 @@ const registerUser = async (req, res) => {
 
         const otp = generatedOtp()
 
+        const stripeCustomer = await Stripe.customers.create({
+            name: name,
+            email: email,
+        });
+
         const payload = {
+            customerId: stripeCustomer.id,
             name,
             email,
             password,
@@ -173,7 +180,7 @@ const googleLogin = async (req, res) => { //create a common function for social 
                 email,
                 avatar: picture,
                 isEmailVerified: true,
-                isGoogleLoggedIn:true
+                isGoogleLoggedIn: true
             });
         }
 
@@ -372,7 +379,7 @@ const resetPassword = async (req, res) => {
 const updateUserDetails = async (req, res) => {
     try {
         const userId = req.userId //auth middleware
-        const { name, email, phone,password } = req.body
+        const { name, email, phone, password } = req.body
 
         let hashPassword = ""
 
@@ -388,9 +395,11 @@ const updateUserDetails = async (req, res) => {
             ...(email && { email: email }),
             ...(phone && { phone: phone }),
             ...(password && { password: hashPassword })
+        }, {
+            new: true
         })
 
-        const { password:pw, ...rest } = updateUser._doc
+        const { password: pw, ...rest } = updateUser._doc
         return res.json({
             message: "Updated successfully",
             success: true,
@@ -412,7 +421,7 @@ const uploadAvatar = async (req, res) => {
         const existingAvatarPath = await UserModel.findById(userId)
         let oldAvatar = path.parse(existingAvatarPath.avatar).base
         let unlinkPath = path.dirname(__dirname) + "/tmp/uploads/" + oldAvatar
-P
+
         fs.unlink(unlinkPath, (err) => {
             console.log(err);
         })
@@ -524,4 +533,202 @@ const sendOtp = async (req, res) => {
     }
 }
 
-export { registerUser, verifyEmail, loginUser, googleLogin, forgotPasswordOtp, verifyForgotPasswordOtp, resetPassword, updateUserDetails, logout, userDetails, sendOtp, uploadAvatar }
+const stripeOnboardAccountLink = async (req, res) => {
+    try {
+
+        const userId = req.userId
+
+        const userDetails = await userModel.findById(userId);
+        if (!userDetails) {
+            throw new Error("User not found");
+        }
+
+        let accountId = "";
+        if (!userDetails.accountId) {
+            const account = await Stripe.accounts.create({
+                type: "custom",
+                email: userDetails?.email
+            });
+            userDetails.accountId = account.id
+            userDetails.save()
+            accountId = account.id
+        }
+        accountId = userDetails.accountId
+
+
+        const accountLink = await Stripe.accountLinks.create({
+            account: accountId,
+            refresh_url: "http://localhost:5173/bank-accounts",
+            return_url: "http://localhost:5173/bank-accounts",
+            type: "account_onboarding",
+        });
+
+        return res.json({
+            success: true,
+            url: accountLink.url,
+            message: "user details fetched"
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+const getStripeAccountStatus = async (req, res) => {
+    try {
+        const userId = req.userId
+        const userDetails = await userModel.findById(userId)
+        if (!userDetails) {
+            throw new Error("User not found");
+        }
+
+        const account = await Stripe.accounts.retrieve(userDetails.accountId);
+        if (account.payouts_enabled) {
+            userDetails.onBoarded = true
+            userDetails.save()
+        }
+
+        return res.json({
+            success: true,
+            data: userDetails,
+            message: "account details fetched"
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+
+const stripeOnboardAccountDelLink = async (req, res) => {
+
+    // const accounts = await Stripe.accounts.list({
+
+    // });
+    //     console.log(accounts);
+    //     return
+    const deleted = await Stripe.accounts.del('acct_1QyreO2KunZ48vGp');
+    const deleted1 = await Stripe.accounts.del('acct_1QyrmPRrOb1dS0kd');
+    const deleted2 = await Stripe.accounts.del('acct_1QysNwRs38vbRkIH');
+    // const deleted3 = await Stripe.accounts.del('acct_1Qyt5R2Kgtw0zxmx');
+    // const deleted4 = await Stripe.accounts.del('acct_1QyrRhRxL2EwsUeb');
+    // const deleted5 = await Stripe.accounts.del('acct_1QyrRr2L5HlcrTR2');
+    return;
+}
+
+const getUserStripeBanks = async (req, res) => {
+    try {
+        const userId = req.userId
+        const userDetails = await userModel.findById(userId);
+        const externalAccounts = await Stripe.accounts.listExternalAccounts(
+            userDetails.accountId,
+            {
+                object: 'bank_account',
+            }
+        );
+        let bankIds = externalAccounts.data.map(a => a.id);
+        return res.json({
+            success: true,
+            accounts: externalAccounts.data,
+            message: "user details fetched"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+const createBankAccount = async (req, res) => {
+    try {
+        const userId = req.userId
+        const data = req.body
+
+        if (!data.token) {
+            throw new Error("Please provide token");
+        }
+        const userDetails = await userModel.findById(userId);
+        const customerSource = await Stripe.accounts.createExternalAccount(
+            userDetails.accountId,
+            {
+                external_account: data.token,
+            }
+        );
+
+        return res.json({
+            success: true,
+            account: customerSource,
+            message: "Bank account created"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+const deleteBankAccount = async (req, res) => {
+    try {
+        const data = req.body
+        const userId = req.userId
+        const userDetails = await userModel.findById(userId);
+        const externalAccounts = await Stripe.accounts.deleteExternalAccount(
+            userDetails.accountId,
+            data.bankId
+        );
+
+        return res.json({
+            success: true,
+            accounts: externalAccounts.data,
+            message: "Bank Account Deleted"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+const getCustomerPaymentMethods = async (req, res) => {
+    try {
+        const userId = req.userId
+        const userDetails = await userModel.findById(userId);
+        const paymentMethods = await Stripe.customers.listPaymentMethods(
+            userDetails.customerId,
+            {
+                limit: 3,
+            }
+        );
+       
+
+        let cards = paymentMethods.data.map(item => ({
+            id: item.id,
+            brand: item.card.brand,
+            exp_month: item.card.exp_month,
+            exp_year: item.card.exp_year,
+            last4: item.card.last4
+        }))
+      
+        return res.json({
+            success: true,
+            cards: cards,
+            message: "Payment methods fetched"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+export { registerUser, verifyEmail, loginUser, googleLogin, forgotPasswordOtp, verifyForgotPasswordOtp, resetPassword, updateUserDetails, logout, userDetails, sendOtp, uploadAvatar, stripeOnboardAccountLink, getStripeAccountStatus, getUserStripeBanks, stripeOnboardAccountDelLink, createBankAccount, deleteBankAccount, getCustomerPaymentMethods }

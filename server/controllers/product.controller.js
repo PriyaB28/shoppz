@@ -7,6 +7,8 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import fs from "fs"
 
+import Stripe from "../config/stripe.js"
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -45,7 +47,7 @@ export const createProduct = async (req, res) => {
             throw new Error("Unable to save product");
         }
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: "Product created successfully",
             data: product
@@ -82,9 +84,48 @@ export const getProducts = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "Products fetched",
-            data: products
+            data: products,
+            pages:page,
         });
 
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+/**
+ * @desc    Get a single product by ID
+ * @route   GET /api/products/:id
+ * @access  Public
+ */
+export const getProductsByCatId = async (req, res) => {
+    try {
+        const categoryId = req.body.categoryId
+        if (!categoryId) {
+            throw new Error("Id not found");
+        }
+        const product = await Product.find({
+            "categories": {
+                "$in": [
+                    categoryId
+                ]   
+        }
+        }).populate("categories", ["_id", "name"]).populate("subCategories", ["_id", "name"]);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Product fetched",
+            data: product
+        });
     } catch (error) {
         res.status(500).json({
             success: false,

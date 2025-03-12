@@ -14,12 +14,12 @@ createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <BrowserRouter>
-        <StrictMode>
+        {/* <StrictMode> */}
           <GoogleOAuthProvider clientId="933048299435-cig2t48q8pol9guqa1rg2q1tm2amq28i.apps.googleusercontent.com">
             {/* <RouterProvider router={router} /> */}
             <App />
           </GoogleOAuthProvider>
-        </StrictMode>
+        {/* </StrictMode> */}
       </BrowserRouter>
     </PersistGate>
   </Provider>

@@ -171,7 +171,7 @@ const Register = () => {
                                                     <button
                                                         aria-label="button"
                                                         type="button"
-                                                        className="ti-btn ti-btn-light !mb-0 !rounded-s-none dark:border-white/10 !border-s-0 w-4 h-4 absolute top-3 start-4"
+                                                        className=" !mb-0 !rounded-s-none dark:border-white/10 !border-s-0 w-4 h-4 absolute top-3 start-4"
                                                         onClick={handleShowPassword}
                                                     >
                                                         {/* <i className="align-middle ri-eye-off-line"></i> */}
@@ -203,7 +203,7 @@ const Register = () => {
                                                     <button
                                                         aria-label="button"
                                                         type="button"
-                                                        className="ti-btn ti-btn-light !mb-0 !rounded-s-none dark:border-white/10 !border-s-0 w-4 h-4 absolute top-3 start-4"
+                                                        className=" !mb-0 !rounded-s-none dark:border-white/10 !border-s-0 w-4 h-4 absolute top-3 start-4"
                                                         onClick={handleShowConfirmPassword}
                                                     >
                                                         {/* <i className="align-middle ri-eye-off-line"></i> */}

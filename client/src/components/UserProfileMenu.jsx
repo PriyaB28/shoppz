@@ -3,11 +3,12 @@ import useAuth from '../hooks/useAuth'
 import { toast } from 'react-toastify'
 import { logoutApi, uploadAvatar } from '../api/backendApi'
 import useUserDetails from '../hooks/useUserDetails'
+import { Link } from 'react-router'
 
 const UserProfileMenu = () => {
     const { user } = useAuth()
     const { loaded, setLoaded, getUserDetails } = useUserDetails()
-    
+
     const [image,setImage] = useState(user.userInfo.avatar)
     const handleLogout = async () => {
         try {
@@ -57,7 +58,7 @@ const UserProfileMenu = () => {
     return (
         <div className="lg:w-1/4 md:w-1/3 md:px-3">
             <div className="relative md:-mt-48 -mt-32">
-                <div className="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900">
+                <div className="p-6 rounded-md mt-10 shadow shadow-slate-600 bg-white dark:bg-slate-900">
                     <div className="profile-pic text-center mb-5">
                         <input
                             id="pro-img"
@@ -105,16 +106,31 @@ const UserProfileMenu = () => {
                             </li>
 
                             <li className="navbar-item account-menu">
-                                <a
-                                    href="user-billing.html"
+                                <Link
+                                    to={"/address"}
                                     className="navbar-link text-slate-400 flex items-center py-2 rounded"
                                 >
                                     <span className="me-2 mb-0">
                                         <i data-feather="edit" className="size-4"></i>
                                     </span>
                                     <h6 className="mb-0 font-medium">Billing Info</h6>
-                                </a>
+                                </Link>
                             </li>
+
+                            {user?.userInfo?.role == "SELLER" ? 
+                             <li className="navbar-item account-menu">
+                             <Link
+                                 to={"/bank-accounts"}
+                                 className="navbar-link text-slate-400 flex items-center py-2 rounded"
+                             >
+                                 <span className="me-2 mb-0">
+                                     <i data-feather="edit" className="size-4"></i>
+                                 </span>
+                                 <h6 className="mb-0 font-medium">Bank Accounts</h6>
+                             </Link>
+                         </li>
+:""
+                        }
 
                             <li className="navbar-item account-menu">
                                 <a

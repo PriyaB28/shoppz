@@ -30,15 +30,18 @@ import Cookies from 'js-cookie';
 // }
 
 const ProtectedRoute = () => {
+    let roles = ["SELLER","USER"]
     let { user } = useAuth()
     let role = user?.userInfo?.role
     // console.log(role);
     // return
-    if (role && role == "USER") {
+    if (role && roles.includes(role)) {
         return (
             <>
                 <Header />
-                <Outlet />
+                <div className="client bg-slate-900">
+                    <Outlet />
+                    </div>
                 <Footer />
             </>
         )

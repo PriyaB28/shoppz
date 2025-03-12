@@ -7,7 +7,9 @@ const Layout = () => {
     return (
         <>
             <Header />
-            <Outlet />
+            <div className="client bg-slate-900">
+                <Outlet />
+            </div>
             <Footer />
         </>
     )
