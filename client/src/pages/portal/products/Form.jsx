@@ -13,7 +13,7 @@ registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
 
 
 import 'quill/dist/quill.snow.css';
-import { addProductApi, getCategoriesApi, getProductByIdApi, getSubCategoriesApi ,updateProductApi} from '../../../api/backendApi';
+import { addProductApi, getCategoriesApi, getProductByIdApi, getSubCategoriesApi, updateProductApi } from '../../../api/backendApi';
 import { useFormik } from 'formik';
 import { productSchema } from '../schema';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -30,20 +30,20 @@ const Form = () => {
     const [subState, setSubState] = useState()
     const [rating, setRating] = useState(0)
     const navigate = useNavigate()
-    const [editData, setEditData] = useState({
-        name: "",
-        categories: [],
-        subCategories: [],
-        size:[]
-    })
+    // const [editData, setEditData] = useState({
+    //     name: "",
+    //     categories: [],
+    //     subCategories: [],
+    //     size: []
+    // })
     const { id } = useParams()
 
     const sizeObject = [
-        { value: "XS",label: "Extra Small" },
-        { value: "S",label: "Small" },
-        { value: "M",label: "Medium" },
-        { value: "L",label: "Large" },
-        { value: "XL",label: "Extra Large" },
+        { value: "XS", label: "Extra Small" },
+        { value: "S", label: "Small" },
+        { value: "M", label: "Medium" },
+        { value: "L", label: "Large" },
+        { value: "XL", label: "Extra Large" },
     ]
 
     const getEditData = async (id) => {
@@ -59,20 +59,18 @@ const Form = () => {
         const size = sizeObject.filter(item => {
             return data?.size.includes(item.value)
         })
-
-        setEditData({ ...data, categories, subCategories,size })
+    
+        setValues({
+            ...values, ...data, productImages:data.images,categories,subCategories,size, id: id ,
+        })
+        // setEditData({ ...data, categories, subCategories, size })
     }
 
     useEffect(() => {
         if (id) getEditData(id)
-
     }, [id])
 
-
-
-
     const modules = {
-
         toolbar: [
             [{ header: [1, 2, false] }],
             ['bold', 'italic', 'underline', 'strike'], // Text Formatting
@@ -98,20 +96,15 @@ const Form = () => {
     React.useEffect(() => {
         if (quill) {
             quill.on('text-change', (delta, oldDelta, source) => {
-
                 setFieldValue("features", quill.root.innerHTML.toString())
-
             });
             if (id) {
-                quill.clipboard.dangerouslyPasteHTML(editData.features);
+                quill.clipboard.dangerouslyPasteHTML(values.features);
             }
         }
     }, [quill]);
 
-
     const featureRef = useRef();
-
-
     useEffect(() => {
         if (featureRef?.current?.firstChild) {
 
@@ -136,6 +129,8 @@ const Form = () => {
             return addProductApi(data)
         },
         onSuccess: (response) => {
+            console.log(response);
+
             if (response.status == 200) {
                 resetForm()
                 let message = "Product added"
@@ -153,33 +148,30 @@ const Form = () => {
         }
     })
 
-
     let initialValues = {
         // id: "",
-        id: id ? id : "",
-        name: editData.name ? editData.name : "",
-        description: editData.description ? editData.description : "",
-        features: editData.features ? editData.features : "",
-        productImages: editData.images ? editData.images : [],
-        price: editData.price ? editData.price : 0,
-        discount: editData.discount ? editData.discount : 0,
-        afterDiscountPrice: editData.afterDiscountPrice ? editData.afterDiscountPrice : 0,
-        categories: editData.categories ? editData.categories : [],
-        subCategories: editData.subCategories ? editData.subCategories : [],
-        stockCount: editData.stockCount ? editData.stockCount : 0,
-        rating: editData.rating ? editData.rating : 0,
-        publish: editData.publish ? editData.publish : false,
-        size: editData.size ? editData?.size : [],
+        name: "",
+        description: "",
+        features: "",
+        productImages: [],
+        price: 0,
+        discount: 0,
+        afterDiscountPrice: 0,
+        categories: [],
+        subCategories: [],
+        stockCount: 0,
+        rating: 0,
+        publish: false,
+        size: [],
     };
 
-    const { values, errors, touched, resetForm, handleBlur, handleChange, handleSubmit, setFieldValue } = useFormik({
+    const { setValues, values, errors, touched, resetForm, handleBlur, handleChange, handleSubmit, setFieldValue } = useFormik({
         initialValues: initialValues,
         validationSchema: productSchema,
         enableReinitialize: true,
         onSubmit: async (values) => {
-         
+
             if (id) {
-            
                 values.productImages.map((image, index) => {
                     let filename = image.file.name;
                     if (image.file instanceof File == false) {
@@ -195,7 +187,7 @@ const Form = () => {
             }
             let data = new FormData();
 
-            let elemArray = ["categories", "subCategories","size"]
+            let elemArray = ["categories", "subCategories", "size"]
             for (const element in values) {
                 if (element == "productImages") {
                     values[element].forEach((file) => {
@@ -257,8 +249,7 @@ const Form = () => {
     })
     let allSubCategories = subCategories?.data?.data
 
-    // console.log(allSubCategories);
-    // return
+
     let selectedCategoryArray = []
     values.categories.forEach((item) => {
         selectedCategoryArray.push(item.value)
@@ -281,16 +272,15 @@ const Form = () => {
 
         setSubState()
         if (selectedCategoryArray.length >= 0 && allSubCategories) {
-            // console.log(allSubCategories);
 
             newSubCategories = allSubCategories?.filter(obj => containsAny(obj.categories, selectedCategoryArray, "_id")
             )
             newSubCategories = newSubCategories?.map((category) => {
                 return { value: category._id, label: category.name }
             })
+
             newSelectedSubCategories = newSubCategories.filter(item => {
                 return selectedSubCategoryArray.includes(item["value"])
-
             })
 
             values.subCategories = newSelectedSubCategories
@@ -323,7 +313,7 @@ const Form = () => {
         setFieldValue("afterDiscountPrice", calculateDiscountedPrice(values.price, values.discount));
     }, [values.discount, values.price]);
 
-let title = id ? "Edit" : "Add"
+    let title = id ? "Edit" : "Add"
     return (
         <div className="main-content app-content">
             <div className="container-fluid">
@@ -875,7 +865,7 @@ let title = id ? "Edit" : "Add"
                                 </div>
                                 <div className="box-footer border-t border-block-start-dashed sm:flex justify-end">
                                     <button type='submit' className="ti-btn bg-primarytint1color text-white me-2 mb-2 mb-sm-0">
-                                        {title} Product<BiPlus className='ms-2' /> 
+                                        {title} Product<BiPlus className='ms-2' />
                                     </button>
                                     {/* <button className="ti-btn ti-btn-primary mb-2 mb-sm-0">
                                         Save Product<i className="bi bi-download ms-2"></i>

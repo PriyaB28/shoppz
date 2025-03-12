@@ -51,35 +51,17 @@ const Footer = () => {
                   <div className="grid md:grid-cols-12 grid-cols-1">
                     <div className="md:col-span-4">
                       <ul className="list-none footer-list mt-6">
-                        <li><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Men</a>
+                        <li><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Men</a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Jackets & Coats </a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center "><MdOutlineChevronRight/> Jackets & Coats </a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Jeans </a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Jeans </a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/>  Loungewear </a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/>  Loungewear </a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Polo shirts </a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Polo shirts </a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Shirts</a>
-                        </li>
-                      </ul>
-                    </div>
-                    {/* <!--end col--> */}
-
-                    <div className="md:col-span-4">
-                      <ul className="list-none footer-list mt-6">
-                        <li><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Shorts </a>
-                        </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Suits Swimwear </a>
-                        </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> T-shirts </a>
-                        </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Tracksuits </a>
-                        </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Trousers</a>
-                        </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Shirts</a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Shirts</a>
                         </li>
                       </ul>
                     </div>
@@ -87,17 +69,35 @@ const Footer = () => {
 
                     <div className="md:col-span-4">
                       <ul className="list-none footer-list mt-6">
-                        <li><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> My account </a>
+                        <li><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Shorts </a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Order History </a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Suits Swimwear </a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Wish List </a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> T-shirts </a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Newsletter</a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Tracksuits </a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Affiliate</a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Trousers</a>
                         </li>
-                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out"><MdOutlineChevronRight/> Returns</a>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Shirts</a>
+                        </li>
+                      </ul>
+                    </div>
+                    {/* <!--end col--> */}
+
+                    <div className="md:col-span-4">
+                      <ul className="list-none footer-list mt-6">
+                        <li><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> My account </a>
+                        </li>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Order History </a>
+                        </li>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Wish List </a>
+                        </li>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Newsletter</a>
+                        </li>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Affiliate</a>
+                        </li>
+                        <li className="mt-[10px]"><a href="#" className="text-gray-300 hover:text-gray-400 duration-500 ease-in-out flex items-center"><MdOutlineChevronRight/> Returns</a>
                         </li>
                       </ul>
                     </div>

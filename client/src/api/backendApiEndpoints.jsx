@@ -44,6 +44,30 @@ const backendApiEndpoints = {
     userDetails: {
         url: "api/user/user-details"
     },
+    accountLink: {
+        url: "api/user/get-account-link"
+    },
+    accountStatus: {
+        url: "api/user/get-account-status"
+    },
+    accountBanks: {
+        url: "api/user/get-account-banks"
+    },
+    createBankAccount: {
+        url: "api/user/create-bank-account",
+        method:"post"
+    },
+    deleteBankAccount: {
+        url: "api/user/delete-bank-account",
+        method:"post"
+    },
+    createPaymentIntent: {
+        url: "api/order/create-payment-intent",
+        method:"post"
+    },
+    getPaymentMethods: {
+        url:"api/user/payment-methods",
+    },
     categories: {
         url: "api/category"
     },
@@ -97,6 +121,40 @@ const backendApiEndpoints = {
         url: "api/product",
         method:"put"
     },
+    addItemCart: {
+        url: "api/cart",
+        method:"post"
+    },
+    cartItems: {
+        url:"api/cart",
+    },
+    deleteCartItem: {
+        url: "/api/cart",
+        method:"delete"
+    },
+    emptyCart: {
+        url: "/api/cart/empty-cart",
+        method:"delete"
+    },
+    updateCartItemQty: {
+        url: "api/cart",
+        method:"put"
+    },
+    addAddress: {
+        url: "api/address",
+        method:"post"
+    },
+    addresses: {
+        url: "api/address",
+    },
+    createOrder: {
+        url: "api/order",
+        method:"post"
+    },
+    stripePayment: {
+        url: "api/order/payment",
+        method:"post"
+    }
 }
 
 export default backendApiEndpoints

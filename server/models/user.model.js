@@ -2,6 +2,22 @@ import mongoose from "mongoose";
 import bcryptjs from 'bcryptjs'
 
 const userSchema = new mongoose.Schema({
+    customerId: {
+        type: String,
+        required: true
+    },
+    accountId: {
+        type: String,
+        default: null
+    },
+    onBoarded: {
+        type: Boolean,
+        default: false
+    },
+    detailsComplete: {
+        type: Boolean,
+        default: false
+    },
     name: {
         type: String,
         required: [true, "Please provide name"]
@@ -13,7 +29,7 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: Number,
-        unique:true
+        unique: true,
     },
     password: {
         type: String,
@@ -58,7 +74,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['ADMIN', "USER"],
+        enum: ['ADMIN', "USER", "SELLER"],
         default: "USER"
     },
     verificationCode: Number,
@@ -83,11 +99,11 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
 };
 
 function isGoogleLoggedIn() {
-    if(this.isGoogleLoggedIn === true){  
+    if (this.isGoogleLoggedIn === true) {
         return false;
     }
     return true;
-} 
+}
 
 const UserModel = mongoose.model("User", userSchema)
 

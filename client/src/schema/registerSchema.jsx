@@ -32,3 +32,13 @@ profileValidations.password = Yup.string().min(8, "Must be 8 characters or more"
 .matches(/[@$!%*#?&]+/, "One special character")
     .matches(/\d+/, "One number")
 export const profileSchema = Yup.object(profileValidations)
+
+const addressValidations = {
+    addressLine: Yup.string().required('Address is required'),
+    city: Yup.string().required(),
+    state: Yup.string().required(),
+    country: Yup.string().required(),
+    pincode:Yup.string().required("Zipcode is required")
+}
+
+export const addressSchema = Yup.object(addressValidations) 

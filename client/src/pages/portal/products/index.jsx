@@ -30,6 +30,7 @@ const index = () => {
     })
     let products = data?.data?.data
     let pagination = data?.data
+    
 
     // if (isPending) return (<Loader />)
     //   if( postQuery.isError ) return (<h1>Error loading data!!!</h1>)
@@ -119,12 +120,12 @@ const index = () => {
                                                         <td>
                                                             <div className="flex">
                                                                 <span className="avatar avatar-md avatar-square bg-light"><img
-                                                                    src={item.images[0]}
+                                                                    src={item?.images?.[0]}
                                                                     className="w-full h-full" alt={item.name}
                                                                     onClick={() => { setImageUrl(item.images[0]) }} /></span>
                                                                 <div className="ms-2">
                                                                     <p className="font-semibold mb-0 flex items-center"><a
-                                                                        href="#"> {item.name}</a></p>
+                                                                        href="#" className=''> {item.name}</a></p>
                                                                     <p
                                                                         className="text-xs text-textmuted dark:text-textmuted/50 mb-0">
                                                                         SoundWave</p>

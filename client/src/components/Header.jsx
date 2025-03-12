@@ -5,14 +5,18 @@ import { FiHeart } from "react-icons/fi";
 import { Link, useNavigate } from 'react-router'
 import { IoIosLogIn } from "react-icons/io";
 import useAuth from '../hooks/useAuth';
-import { logoutApi } from '../api/backendApi';
+import { getCategoriesApi, getSubCategoriesApi, logoutApi } from '../api/backendApi';
 import { logout } from "../redux/authSlice"
 import { toast } from 'react-toastify';
+import { useQuery } from '@tanstack/react-query';
+import useCart from '../hooks/useCart';
 const Header = () => {
     const [openMobileMenu, setOpenMobileMenu] = useState(false)
     const [colorChange, setColorchange] = useState(false);
     const [openUserDropDownMenu, setopenUserDropDownMenu] = useState(false)
+    const [openUserCartMenu, setopenUserCartMenu] = useState(false)
     const { user, dispatch } = useAuth()
+    const { cart } = useCart()
 
     const navigate = useNavigate()
 
@@ -40,8 +44,43 @@ const Header = () => {
 
     useEffect(() => {
         user
-    },[])
+    }, [])
 
+    const { data, isPending, refetch, error, status } = useQuery({
+        queryKey: ['category'],
+        queryFn: () => getCategoriesApi(1, 0)
+    })
+    if (status == "error") {
+        toast.error(error.message)
+    }
+    let categories = [];
+    if (status == "success") {
+        categories = data?.data?.data
+    }
+
+    const { data: subCatData, refetch: subRefetch, error: subCatError, status: subCatStatus } = useQuery({
+        queryKey: ['subCategory'],
+        queryFn: () => getSubCategoriesApi(1, 0)
+    })
+    if (subCatStatus == "error") {
+        toast.error(subCatError.message)
+    }
+    let subCategories = [];
+    let testt = [];
+    if (subCatStatus == "success") {
+        subCategories = subCatData?.data?.data
+        categories?.forEach((item) => {
+            return item.subCategories = subCategories.filter((subCat) => {
+                if (subCat.categories.some((cat) => cat._id == item._id)) {
+                    return subCat
+                }
+            })
+        })
+
+    }
+
+    // console.log(categories[0]?.subCategories[0]);
+    // return
     return (
         <>
             <nav id="topnav" className={`defaultscroll is-sticky bg-slate-950 ${colorChange ? "nav-sticky" : ""}`}>
@@ -85,27 +124,43 @@ const Header = () => {
                         </li>
 
                         <li className="dropdown inline-block relative ps-0.5">
-                            <button data-dropdown-toggle="dropdown" className="dropdown-toggle size-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-full bg-orange-500 border border-orange-500 text-white" type="button">
+                            <button data-dropdown-toggle="dropdown" className=" dropdown-toggle size-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-full bg-orange-500 border border-orange-500 text-white" onClick={() => setopenUserCartMenu(preve => !preve)} type="button">
                                 <LuShoppingCart />
+                                <span className="badge !rounded-full  bg-success text-white absolute -end-2 -top-1">{cart?.cart?.length}</span>
                             </button>
                             {/* <!-- Dropdown menu --> */}
-                            <div className="dropdown-menu absolute end-0 m-0 mt-4 z-10 w-64 rounded-md bg-white dark:bg-slate-900 shadow dark:shadow-gray-800 hidden" onClick={() => { }}>
+                            <div className={`dropdown-menu absolute end-0 m-0  z-10 w-64 rounded-md bg-white dark:bg-slate-900 shadow dark:shadow-gray-800 overflow-hidden ${openUserCartMenu == true ? "" : "hidden"} `} onClick={() => { }}>
                                 <ul className="py-3 text-start" aria-labelledby="dropdownDefault">
-                                    <li>
-                                        <a href="#" className="flex items-center justify-between py-1.5 px-4">
-                                            <span className="flex items-center">
-                                                <img src="assets/images/shop/trendy-shirt.jpg" className="rounded shadow dark:shadow-gray-800 w-9" alt="" />
-                                                <span className="ms-3">
-                                                    <span className="block font-semibold">T-shirt (M)</span>
-                                                    <span className="block text-sm text-slate-400">$320 X 2</span>
+
+                                    {cart?.cart?.length !== 0 && cart?.cart?.map((item, index) =>
+                                        <li key={index}>
+                                            <a href="#" className="flex items-center justify-between py-1.5 px-4">
+                                                <span className="flex items-center">
+                                                    <img src={item.productId.images[0]} className="rounded shadow dark:shadow-gray-800 w-9" alt="" />
+                                                    <span className="ms-3">
+                                                        <span className="block font-semibold">{item.productId.name} (M)</span>
+                                                        <span className="block text-sm text-slate-400">${item.productId.afterDiscountPrice} X {item.quantity}</span>
+                                                    </span>
                                                 </span>
-                                            </span>
 
-                                            <span className="font-semibold">$640</span>
-                                        </a>
-                                    </li>
+                                                <span className="font-semibold">${item.productId.afterDiscountPrice * item.quantity}</span>
+                                            </a>
+                                        </li>
+                                    )}
 
-                                    <li>
+                                    {cart?.cart?.length == 0 &&
+                                        <li>
+                                            <a href="#" className="flex items-center  text-center  py-1.5 px-4">
+                                                <span className="text-center mx-auto">
+                                                    No Items
+                                                </span>
+
+
+                                            </a>
+                                        </li>
+                                    }
+
+                                    {/* <li>
                                         <a href="#" className="flex items-center justify-between py-1.5 px-4">
                                             <span className="flex items-center">
                                                 <img src="assets/images/shop/luxurious-bag2.jpg" className="rounded shadow dark:shadow-gray-800 w-9" alt="" />
@@ -131,27 +186,31 @@ const Header = () => {
 
                                             <span className="font-semibold">$800</span>
                                         </a>
-                                    </li>
+                                    </li> */}
+                                    {cart?.cart?.length !== 0 && (
+                                        <>
+                                            <li className="border-t border-gray-100 dark:border-gray-800 my-2"></li>
 
-                                    <li className="border-t border-gray-100 dark:border-gray-800 my-2"></li>
+                                            <li className="flex items-center justify-between py-1.5 px-4">
+                                                <h6 className="font-semibold mb-0">Total($):</h6>
+                                                <h6 className="font-semibold mb-0">${cart?.cartSubtotal}</h6>
+                                            </li>
 
-                                    <li className="flex items-center justify-between py-1.5 px-4">
-                                        <h6 className="font-semibold mb-0">Total($):</h6>
-                                        <h6 className="font-semibold mb-0">$1690</h6>
-                                    </li>
-
-                                    <li className="py-1.5 px-4">
-                                        <span className="text-center block">
-                                            <a href="#" className="py-[5px] px-4 inline-block font-semibold tracking-wide align-middle duration-500 text-sm text-center rounded-md bg-orange-500 border border-orange-500 text-white">View Cart</a>
-                                            <a href="#" className="py-[5px] px-4 inline-block font-semibold tracking-wide align-middle duration-500 text-sm text-center rounded-md bg-orange-500 border border-orange-500 text-white">Checkout</a>
-                                        </span>
-                                        <p className="text-sm text-slate-400 mt-1">*T&C Apply</p>
-                                    </li>
+                                            <li className="py-1.5 px-4">
+                                                <span className="text-center block">
+                                                    <Link to={"/cart"} className="py-[5px] px-4 inline-block font-semibold tracking-wide align-middle duration-500 text-sm text-center rounded-md bg-orange-500 border border-orange-500 text-white me-2">View Cart</Link>
+                                                    <Link to={"/checkout"} className="py-[5px] px-4 inline-block font-semibold tracking-wide align-middle duration-500 text-sm text-center rounded-md bg-orange-500 border border-orange-500 text-white">Checkout</Link>
+                                                </span>
+                                                <p className="text-sm text-slate-400 mt-1">*T&C Apply</p>
+                                            </li>
+                                        </>
+                                    )
+                                    }
                                 </ul>
                             </div>
                         </li>
 
-                        <li className="inline-block ps-0.5">
+                        <li className="inline-block ps-1">
                             <a href="#" className="size-9 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-full bg-orange-500 text-white">
                                 <FiHeart />
                             </a>
@@ -210,7 +269,22 @@ const Header = () => {
                     <div id="navigation" className={`${openMobileMenu ? "!block" : ""}`}>
                         {/* <!-- Navigation Menu--> */}
                         <ul className="navigation-menu">
-                            <li className="has-submenu parent-menu-item active">
+                            {categories.length !== 0 && categories?.map((cat, index) =>
+                                // <li className="has-submenu parent-menu-item active">
+                                <li key={index} className="has-submenu parent-menu-item ">
+                                    <Link to={"/product-listing"}>{cat?.name}</Link><span className="menu-arrow"></span>
+
+                                    {cat?.subCategories?.length !== 0 &&
+                                        <ul className="submenu ">
+                                            {cat?.subCategories?.map((subCat, index) =>
+                                                <li key={index}><a href="index.html" className="sub-menu-item">{subCat.name}</a></li>
+                                            )}
+
+                                        </ul>
+                                    }
+                                </li>
+                            )}
+                            {/* <li className="has-submenu parent-menu-item active">
                                 <a href="#">Hero</a><span className="menu-arrow"></span>
                                 <ul className="submenu open">
                                     <li><a href="index.html" className="sub-menu-item">Fashion One</a></li>
@@ -414,7 +488,7 @@ const Header = () => {
                                         </ul>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> */}
 
                             {/* <li><a href="sale.html" className="sub-menu-item">Sale</a></li> */}
 
